@@ -1,0 +1,60 @@
+﻿@inject NavigationManager navigationManager
+
+<div class="flex py-2 px-2 bg-gray-200">
+    <CascadingValue Value="@this">
+        @foreach (var collection in Collections)
+        {
+            <CollectionComponent LinkCollection="@collection" />
+        }
+    </CascadingValue>
+</div>
+
+@code {
+    [Parameter] public List<Link> Links { get; set; }
+    [Parameter] public List<LinkCollection> Collections { get; set; }
+
+    public LinkCollection CollectionPayload { get; set; }
+
+    public LinkCollection IsOverCollection { get; set; }
+    public Link LinkPayload { get; set; }
+
+    public void MoveCollectionTo(int targetId, LinkCollection item)
+    {
+        var index = Collections.FindIndex(x => x.Id == targetId);
+        if (index >= 0)
+        {
+            Collections.RemoveAll(x => x.Id == CollectionPayload.Id);
+            Collections.Insert(index, item);
+        }
+        StateHasChanged();
+    }
+
+    public void MoveLinkPayloadTo(Link target)
+    {
+        LinkPayload.LinkCollectionId = target.LinkCollectionId;
+        var index = Links.FindIndex(x => x == target);
+        if (index >= 0)
+        {
+            Links.RemoveAll(x => x == LinkPayload);
+            Links.Insert(index, LinkPayload);
+        }
+        StateHasChanged();
+    }
+
+    public void MoveLinkPayloadTo(LinkCollection target)
+    {
+        LinkPayload.LinkCollectionId = target.Id;
+        StateHasChanged();
+    }
+
+    public void Navigate(Link linkToNavigate)
+    {
+        navigationManager.NavigateTo(linkToNavigate.Url, true);
+    }
+
+    public void Remove(Link linkToDelete)
+    {
+        Links.RemoveAll(x => x == linkToDelete);
+        StateHasChanged();
+    }
+}

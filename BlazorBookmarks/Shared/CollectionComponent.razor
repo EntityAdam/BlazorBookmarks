@@ -1,0 +1,91 @@
+﻿@*
+   ondrop="handleOnDrop(event)"
+*@
+
+<div class="flex flex-col bg-indigo-100 mx-1 px-1 py-1"
+     draggable="true"
+     dropzone="move"
+     @ondragstart="((e) => HandleDragStart(LinkCollection))"
+     @ondragenter="((e) => HandleOnDragEnter())"
+     @ondragleave="((e) => HandleOnDragLeave())"
+     @ondragover:preventDefault
+     @ondragover="((e) => HandleDragOver(LinkCollection))"
+     @ondrop="((e) => HandleDrop(LinkCollection))">
+
+    <div class="@IsVisibleCssClass" style="pointer-events:none;">
+        <div>
+            <h3 class="border-b-2" style="border-color: black;">@LinkCollection.Title  (@ThisLinkCollectionIndex)</h3>
+        </div>
+        <ul class="px-2 py-5" style="pointer-events:auto">
+            @foreach (var i in Container.Links.Where(x => x.LinkCollectionId == LinkCollection.Id))
+            {
+                <LinkComponent Link="@i" />
+            }
+        </ul>
+    </div>
+</div>
+
+
+@code {
+    [CascadingParameter]
+    public CollectionContainerComponent Container { get; set; }
+
+    [Parameter]
+    public LinkCollection LinkCollection { get; set; }
+
+    private int ThisLinkCollectionIndex { get; set; }
+    private string IsVisibleCssClass => LinkCollection.Hidden ? "invisible" : "visible";
+
+    protected override void OnInitialized()
+    {
+        ThisLinkCollectionIndex = Container.Collections.FindIndex(x => x.Id == LinkCollection.Id);
+    }
+
+    public void HandleDragStart(LinkCollection selectedCollection)
+    {
+        Container.CollectionPayload = selectedCollection;
+        Container.CollectionPayload.Hidden = true;
+    }
+
+    public void HandleOnDragEnter()
+    {
+    }
+
+    public void HandleOnDragLeave()
+    {
+    }
+
+    public void HandleDragOver(LinkCollection collection)
+    {
+        if (Container.CollectionPayload != null)
+        {
+            Container.MoveCollectionTo(collection.Id, Container.CollectionPayload);
+        }
+
+        if (Container.LinkPayload != null)
+        {
+            Container.MoveLinkPayloadTo(collection);
+        }
+    }
+
+    public void HandleDrop(LinkCollection dropTarget)
+    {
+        if (Container.CollectionPayload != null)
+        {
+            Container.CollectionPayload.Hidden = false;
+            Container.CollectionPayload = null;
+        }
+
+        if (Container.LinkPayload != null)
+        {
+            Container.LinkPayload.Hidden = false;
+            Container.LinkPayload = null;
+        }
+    }
+
+    [JSInvokable]
+    public static void UrlDrop(string url)
+    {
+        var result = url.Replace(System.Environment.NewLine, string.Empty);
+    }
+}
