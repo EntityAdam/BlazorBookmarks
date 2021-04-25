@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace StateService
 {
-    public sealed class StateManager
+    public sealed class StateManager : IStateManager
     {
         private readonly Stack<State> UndoStack = new Stack<State>();
         private readonly Stack<State> RedoStack = new Stack<State>();
@@ -20,8 +20,11 @@ namespace StateService
 
         public State Redo()
         {
-            UndoStack.Push(CurrentState);
-            CurrentState = RedoStack.Pop();
+            if (RedoStack.Count > 0)
+            {
+                UndoStack.Push(CurrentState);
+                CurrentState = RedoStack.Pop();
+            }
             return CurrentState;
         }
         public State Undo()

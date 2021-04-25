@@ -1,28 +1,32 @@
 ﻿using StateService.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace StateService.Models
 {
-    public class State : ICloneable
+    public class State
     {
+        public State()
+        {
+            Folders = new List<Folder>();
+            Bookmarks = new List<Bookmark>();
+        }
+
         public State(List<Folder> folders, List<Bookmark> bookmarks)
         {
             this.Folders = folders;
             this.Bookmarks = bookmarks;
         }
 
-        public State(State original)
+        public List<Folder> Folders { get; } 
+        public List<Bookmark> Bookmarks { get; } 
+
+        public State DeepCopy()
         {
-
-        }
-
-        public List<Folder> Folders { get; }
-        public List<Bookmark> Bookmarks { get; }
-
-        public State Clone()
-        {
-            
+            var copyFolders = Folders.Select(x => x.ShallowCopy()).ToList();
+            var copyBookmarks = Bookmarks.Select(x=>x.ShallowCopy()).ToList();
+            return new State(copyFolders, copyBookmarks);
         }
     }
 }
