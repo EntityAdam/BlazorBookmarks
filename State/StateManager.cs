@@ -27,6 +27,7 @@ namespace StateService
             }
             return CurrentState;
         }
+        
         public State Undo()
         {
             if (UndoStack.Count > 0)

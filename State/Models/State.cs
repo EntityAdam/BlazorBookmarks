@@ -15,8 +15,8 @@ namespace StateService.Models
 
         public State(List<Folder> folders, List<Bookmark> bookmarks)
         {
-            this.Folders = folders;
-            this.Bookmarks = bookmarks;
+            Folders = folders;
+            Bookmarks = bookmarks;
         }
 
         public List<Folder> Folders { get; } 
