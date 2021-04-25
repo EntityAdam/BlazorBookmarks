@@ -1,47 +1,37 @@
 ﻿using StateService.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StateService
 {
-    public class StateManager //caretaker
+    public sealed class StateManager
     {
-        private Stack<State> undoStack = new Stack<State>();
-        private Stack<State> redoStack = new Stack<State>();
-        private State currentState { get; set; }
+        private readonly Stack<State> UndoStack = new Stack<State>();
+        private readonly Stack<State> RedoStack = new Stack<State>();
+        private State CurrentState { get; set; }
 
-        public StateManager(State state)
+        public void UpdateState(State state)
         {
-            currentState = state;
+            if (CurrentState != null)
+            {
+                UndoStack.Push(CurrentState);
+            }
+            CurrentState = state;
         }
 
-        public void Undo()
+        public State Redo()
         {
-            redoStack.Push(currentState);
-            currentState = undoStack.Pop();
+            UndoStack.Push(CurrentState);
+            CurrentState = RedoStack.Pop();
+            return CurrentState;
         }
-
-        public void Redo()
+        public State Undo()
         {
-            undoStack.Push(currentState);
-            currentState = redoStack.Pop();
+            if (UndoStack.Count > 0)
+            {
+                RedoStack.Push(CurrentState);
+                CurrentState = UndoStack.Pop();
+            }
+            return CurrentState;
         }
-    }
-
-    public class State //memento
-    {
-        public State(IEnumerable<Folder> folders, IEnumerable<Bookmark> bookmarks)
-        {
-            Folders = folders;
-            Bookmarks = bookmarks;
-        }
-
-        public IEnumerable<Folder> Folders { get; private set; }
-        public IEnumerable<Bookmark> Bookmarks { get; private set; }
     }
 }
-
-
