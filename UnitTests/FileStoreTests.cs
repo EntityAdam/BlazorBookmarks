@@ -40,8 +40,8 @@ namespace UnitTests
             var state = store.ReadFromFile();
 
             state.Should().BeOfType(typeof(State));
-            state.Folders.Count().Should().Be(3);
-            state.Bookmarks.Count().Should().Be(3);
+            state.Folders.Length.Should().Be(3);
+            state.Bookmarks.Length.Should().Be(3);
             state.Bookmarks.Where(x => x.FolderId == 1).Count().Should().Be(2);
             state.Bookmarks.Where(x => x.FolderId == 2).Count().Should().Be(1);
             state.Bookmarks.Where(x => x.FolderId == 3).Should().BeEmpty();

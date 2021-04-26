@@ -1,11 +1,9 @@
-﻿using StateService.Models;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace StateService.Models
 {
-    public class State
+    public class State : IDeepCloneable<State>
     {
         public State()
         {

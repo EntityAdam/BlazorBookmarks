@@ -2,10 +2,10 @@
 
 namespace StateService
 {
-    public interface ISnapshottable
+    public interface ISnapshottable<T> where T : IDeepCloneable<T>
     {
-        State CurrentState { get; }
-        StateManager StateManager { get; }
+        T CurrentState { get; }
+        StateManagerBase<T> StateManager { get; }
 
         void Redo();
         void Snapshot();

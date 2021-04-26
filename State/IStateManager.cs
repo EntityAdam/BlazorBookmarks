@@ -2,10 +2,12 @@
 
 namespace StateService
 {
-    public interface IStateManager
+    public interface IStateManager<T>
     {
-        State Redo();
-        State Undo();
-        void UpdateState(State state);
+        public T CurrentState { get; }
+
+        T Redo();
+        T Undo();
+        void UpdateState(T state);
     }
 }

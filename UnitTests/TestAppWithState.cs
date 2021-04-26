@@ -5,10 +5,10 @@ using System.Linq;
 namespace UnitTests
 {
 
-    internal class TestAppWithState : ISnapshottable
+    internal class TestAppWithState : ISnapshottable<State>
     {
         public State CurrentState { get; private set; }
-        public StateManager StateManager { get; }
+        public StateManagerBase<State> StateManager { get; }
 
         public TestAppWithState()
         {
@@ -17,7 +17,7 @@ namespace UnitTests
             CurrentState.Folders.Add(new Folder { Id = 1, Name = "Folder1" });
             CurrentState.Bookmarks.Add(new Bookmark { Id = 1, FolderId = 1, Name = "Bookmark1 " });
             //update statemanager
-            StateManager = new StateManager();
+            StateManager = new StateManagerBase<State>();
             StateManager.UpdateState(CurrentState.DeepCopy());
         }
 
