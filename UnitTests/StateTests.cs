@@ -166,7 +166,41 @@ namespace UnitTests
             orig.GetState().Folders[0].Name.Should().Be("Folder2");
         }
 
-        //create test to validate preservation of order in list<folder> and list<bookmark> when snapshotting
+        [Fact]
+        public void Order_ShouldBePreserved_WhenOnlyIndexIsChanged()
+        {
+            var orig = new Facade(new StateManager<StateModel>(), new BookmarkMemoryStore());
+            var folder1 = new FolderModel { Id = 1, Name = "Folder1" };
+            var folder2 = new FolderModel { Id = 2, Name = "Folder2" };
+            var folder3 = new FolderModel { Id = 3, Name = "Folder3" };
+            var folders = new List<FolderModel>() { folder3, folder2, folder1 };
+            var state1 = new StateModel(folders, new List<BookmarkModel>());
 
+            orig.Snapshot(state1);
+
+            var sortedFolders = state1.Folders.OrderBy(x => x.Id).ToList();
+
+            var state2 = new StateModel(sortedFolders, new List<BookmarkModel>());
+
+            orig.Snapshot(state2);
+
+            var x = orig.Undo();
+        }
+
+        [Fact]
+        public void CopyListIndexOrderRewriteIds()
+        {
+            var folder1 = new FolderModel { Id = 1, Name = "Folder1" };
+            var folder2 = new FolderModel { Id = 2, Name = "Folder2" };
+            var folder3 = new FolderModel { Id = 3, Name = "Folder3" };
+            var folders = new List<FolderModel>() { folder3, folder2, folder1 };
+
+            for (int i = 0; i < folders.Count; i++)
+            {
+                folders[i].Id = i;
+            }
+
+            var x = folders;
+        }
     }
 }
