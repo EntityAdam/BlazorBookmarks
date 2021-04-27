@@ -1,6 +1,7 @@
-﻿using StateService;
-using StateService.Models;
-using System.Linq;
+﻿using System.Linq;
+using Core;
+using Core.Models;
+
 
 namespace UnitTests
 {

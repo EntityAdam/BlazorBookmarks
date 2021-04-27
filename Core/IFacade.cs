@@ -1,7 +1,4 @@
-﻿using Core.Models;
-using StateService;
-
-namespace Core
+﻿namespace Core
 {
     public interface IFacade
     {

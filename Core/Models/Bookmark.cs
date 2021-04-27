@@ -12,5 +12,7 @@ namespace Core.Models
         public int FolderId { get; set; }
         public string Url { get; set; }
         public string Name { get; set; }
+
+        public Bookmark ShallowCopy() => (Bookmark)MemberwiseClone();
     }
 }

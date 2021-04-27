@@ -1,9 +1,5 @@
-﻿using StateService;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Models
 {
@@ -12,9 +8,23 @@ namespace Core.Models
         public List<Folder> Folders { get; set; }
         public List<Bookmark> Bookmarks { get; set; }
 
+        public State()
+        {
+            Folders = new List<Folder>();
+            Bookmarks = new List<Bookmark>();
+        }
+
+        public State(List<Folder> folders, List<Bookmark> bookmarks)
+        {
+            Folders = folders;
+            Bookmarks = bookmarks;
+        }
+
         public State DeepCopy()
         {
-            throw new NotImplementedException();
+            var copyFolders = Folders.Select(x => x.ShallowCopy()).ToList();
+            var copyBookmarks = Bookmarks.Select(x => x.ShallowCopy()).ToList();
+            return new State(copyFolders, copyBookmarks);
         }
     }
 }

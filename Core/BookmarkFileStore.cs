@@ -1,21 +1,24 @@
-﻿using FileStore.Models;
-using System.Text;
-using System.IO;
+﻿using System.IO;
 using System.Text.Json;
+using Core.Models;
 
-namespace FileStore
+namespace Core
 {
-    public class FileStoreService
+    public class BookmarkFileStore : IBookmarkStore
     {
-        public void SaveToFile(State state)
+        private void SaveToFile(State state)
         {
             var jsonContent = JsonSerializer.Serialize(state);
             File.WriteAllText(@"C:\bookmark-test\file.json", jsonContent);
         }
-        public State ReadFromFile()
+        private State ReadFromFile()
         {
             var jsonContent = File.ReadAllText(@"C:\bookmark-test\file.json");
             return JsonSerializer.Deserialize<State>(jsonContent);
         }
+
+        public void Save(State state) => SaveToFile(state);
+
+        public State Get() => ReadFromFile();
     }
 }

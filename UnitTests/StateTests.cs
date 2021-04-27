@@ -1,8 +1,9 @@
-using StateService.Models;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using FluentAssertions;
+using Core.Models;
+
 
 namespace UnitTests
 {
