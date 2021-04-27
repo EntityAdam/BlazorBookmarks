@@ -1,12 +1,13 @@
 ﻿using Core.Models;
 using System;
+using System.Linq;
 
 namespace Core
 {
     public class Facade : ISnapshottable<State>, IFacade
     {
         private readonly IStateManager<State> stateManager;
-        
+
         private readonly IBookmarkStore bookmarkStore;
 
         public Facade(IStateManager<State> stateManager, IBookmarkStore bookmarkStore)
@@ -16,16 +17,33 @@ namespace Core
             LoadState();
         }
 
-        private void LoadState() => stateManager.UpdateState(bookmarkStore.Get());
+        public State CurrentState { get; set; }
 
-        public State CurrentState => stateManager.CurrentState;
+        public void Redo() => CurrentState = stateManager.Redo();
 
-        public StateManagerBase<State> StateManager => throw new NotImplementedException();
+        public void Snapshot() => stateManager.Snapshot(CurrentState);
 
-        public void Redo() => stateManager.Redo();
+        public void Undo() => CurrentState = stateManager.Undo();
 
-        public void Snapshot() => throw new NotImplementedException();
+        private void LoadState()
+        {
+            CurrentState = bookmarkStore.Get();
+            stateManager.LoadState(CurrentState);
+        }
 
-        public void Undo() => stateManager.Undo();
+        public void AddFolder(string name)
+        {
+            int nextId;
+            if (CurrentState.Folders.Count == 0)
+            {
+                nextId = 1;
+            }
+            else
+            {
+                nextId = CurrentState.Folders.Max(x => x.Id) + 1;
+            }
+            CurrentState.Folders.Add(new Folder { Id = nextId, Name = name });
+            Snapshot();
+        }
     }
 }

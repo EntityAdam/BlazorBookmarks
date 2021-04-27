@@ -2,20 +2,22 @@
 
 namespace Core
 {
-    public sealed class StateManagerBase<T> : IStateManager<T>
+    public sealed class StateManager<T> : IStateManager<T> where T : IDeepCloneable<T>
     {
         private readonly Stack<T> UndoStack = new();
         private readonly Stack<T> RedoStack = new();
-        
+
         public T CurrentState { get; private set; }
 
-        public void UpdateState(T state)
+        public void LoadState(T state)
         {
-            if (CurrentState != null)
-            {
-                UndoStack.Push(CurrentState);
-            }
-            CurrentState = state;
+            CurrentState = state.DeepCopy();
+        }
+
+        public void Snapshot(T state)
+        {
+            UndoStack.Push(CurrentState);
+            CurrentState = state.DeepCopy();
         }
 
         public T Redo()
@@ -27,7 +29,7 @@ namespace Core
             }
             return CurrentState;
         }
-        
+
         public T Undo()
         {
             if (UndoStack.Count > 0)

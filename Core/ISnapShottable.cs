@@ -2,8 +2,7 @@
 {
     public interface ISnapshottable<T> where T : IDeepCloneable<T>
     {
-        T CurrentState { get; }
-        StateManagerBase<T> StateManager { get; }
+        T CurrentState { get; set; }
 
         void Redo();
         void Snapshot();

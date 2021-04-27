@@ -6,6 +6,7 @@
 
         T Redo();
         T Undo();
-        void UpdateState(T state);
+        void LoadState(T state);
+        void Snapshot(T state);
     }
 }

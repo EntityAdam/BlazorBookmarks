@@ -3,7 +3,7 @@ using System.Linq;
 using Xunit;
 using FluentAssertions;
 using Core.Models;
-
+using Core;
 
 namespace UnitTests
 {
@@ -44,56 +44,70 @@ namespace UnitTests
         }
 
         [Fact]
+        public void State_Should_DeepCopy2()
+        {
+            var stack = new Stack<State>();
+            var state1 = new State() { Folders = new List<Folder> { new Folder() { Id = 1, Name = "Folder1" } } };
+            stack.Push(state1.DeepCopy());
+
+            var state2 = stack.Pop();          
+            Assert.False(ReferenceEquals(state1, state2));
+
+            state1.Folders[0].Name = "Folder2";
+            
+        }
+
+        [Fact]
         public void Originator_Should_AddFolder()
         {
-            var orig = new TestAppWithState();
-            
-            orig.AddFolder("Folder2");
+            var orig = new Facade(new StateManager<State>(), new BookmarkMemoryStore());
 
-            orig.CurrentState.Folders.Count.Should().Be(2);
+            orig.AddFolder("Folder1");
+
+            orig.CurrentState.Folders.Count.Should().Be(1);
         }
 
         [Fact]
         public void Originator_Should_Undo()
         {
-            var orig = new TestAppWithState();
-            orig.AddFolder("Folder2");
+            var orig = new Facade(new StateManager<State>(), new BookmarkMemoryStore());
+            orig.AddFolder("Folder1");
 
             orig.Undo();
 
-            orig.CurrentState.Folders.Count.Should().Be(1);
+            orig.CurrentState.Folders.Count.Should().Be(0);
         }
 
         [Fact]
         public void Originator_Should_Redo()
         {
-            var orig = new TestAppWithState();
-            orig.AddFolder("Folder2");
+            var orig = new Facade(new StateManager<State>(), new BookmarkMemoryStore());
+            orig.AddFolder("Folder1");
 
             orig.Undo();
             orig.Redo();
-
-            orig.CurrentState.Folders.Count.Should().Be(2);
-        }
-
-        [Fact]
-        public void OriginatorUndo_ShouldReturnToOriginalStateAndNotFail()
-        {
-            var orig = new TestAppWithState();
-            orig.AddFolder("Folder2");
-
-            orig.Undo();
-            orig.Undo();
 
             orig.CurrentState.Folders.Count.Should().Be(1);
         }
 
         [Fact]
+        public void OriginatorUndo_ShouldReturnToOriginalStateAndNotFail()
+        {
+            var orig = new Facade(new StateManager<State>(), new BookmarkMemoryStore());
+            orig.AddFolder("Folder1");
+
+            orig.Undo();
+            orig.Undo();
+
+            orig.CurrentState.Folders.Count.Should().Be(0);
+        }
+
+        [Fact]
         public void OriginatorRedo_ShouldReturnToLatestStateAndNotFail()
         {
-            var orig = new TestAppWithState();
+            var orig = new Facade(new StateManager<State>(), new BookmarkMemoryStore());
+            orig.AddFolder("Folder1");
             orig.AddFolder("Folder2");
-            orig.AddFolder("Folder3");
 
             orig.Undo();
             orig.Undo();
@@ -101,7 +115,7 @@ namespace UnitTests
             orig.Redo();
             orig.Redo();
 
-            orig.CurrentState.Folders.Count.Should().Be(3);
+            orig.CurrentState.Folders.Count.Should().Be(2);
         }
     }
 }
