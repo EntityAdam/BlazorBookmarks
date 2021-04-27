@@ -165,5 +165,8 @@ namespace UnitTests
 
             orig.GetState().Folders[0].Name.Should().Be("Folder2");
         }
+
+        //create test to validate preservation of order in list<folder> and list<bookmark> when snapshotting
+
     }
 }
