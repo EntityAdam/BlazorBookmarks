@@ -1,6 +1,10 @@
 ﻿@inject NavigationManager navigationManager
+@inject IFacade facade
 
-<div class="flex py-2 px-2 bg-gray-200">
+<div class="flex py-2 px-2 bg-gray-200"
+     tabindex="1"
+     @onkeypress="((e) => HandleKeyPress(e))"
+     @onkeypress:preventDefault>
     <CascadingValue Value="@this">
         @foreach (var folder in CurrentState.Folders)
         {
@@ -11,14 +15,22 @@
 
 @code {
     [Parameter]
-    public Core.Models.State CurrentState { get; set; }
+    public StateModelUi CurrentState { get; set; }
 
-    public Core.Models.Folder CollectionPayload { get; set; }
+    [Parameter]
+    public EventCallback SnapShotCallback { get; set; }
 
-    public Core.Models.Folder IsOverCollection { get; set; }
-    public Core.Models.Bookmark LinkPayload { get; set; }
+    [Parameter]
+    public EventCallback UndoCallback { get; set; }
 
-    public void MoveCollectionTo(int targetId, Core.Models.Folder item)
+    [Parameter]
+    public EventCallback RedoCallback { get; set; }
+
+    public FolderModelUi CollectionPayload { get; set; }
+    public FolderModelUi IsOverCollection { get; set; }
+    public BookmarkModelUi LinkPayload { get; set; }
+
+    public void MoveCollectionTo(int targetId, FolderModelUi item)
     {
         var index = CurrentState.Folders.FindIndex(x => x.Id == targetId);
         if (index >= 0)
@@ -29,7 +41,7 @@
         StateHasChanged();
     }
 
-    public void MoveLinkPayloadTo(Core.Models.Bookmark target)
+    public void MoveLinkPayloadTo(BookmarkModelUi target)
     {
         LinkPayload.FolderId = target.FolderId;
         var index = CurrentState.Bookmarks.FindIndex(x => x == target);
@@ -41,20 +53,36 @@
         StateHasChanged();
     }
 
-    public void MoveLinkPayloadTo(Core.Models.Folder target)
+    public void MoveLinkPayloadTo(FolderModelUi target)
     {
         LinkPayload.FolderId = target.Id;
         StateHasChanged();
     }
 
-    public void Navigate(Core.Models.Bookmark linkToNavigate)
+    public void Navigate(BookmarkModelUi linkToNavigate)
     {
         navigationManager.NavigateTo(linkToNavigate.Url, true);
     }
 
-    public void Remove(Core.Models.Bookmark linkToDelete)
+    public void Remove(BookmarkModelUi linkToDelete)
     {
         CurrentState.Bookmarks.RemoveAll(x => x == linkToDelete);
         StateHasChanged();
+    }
+
+    public void HandleKeyPress(KeyboardEventArgs e)
+    {
+        var keys = e;
+        if (e.CtrlKey)
+        {
+            if (e.Code == "KeyZ")
+            {
+                UndoCallback.InvokeAsync().Wait();
+            }
+            else if (e.Code == "KeyY")
+            {
+                RedoCallback.InvokeAsync().Wait();
+            }
+        }
     }
 }

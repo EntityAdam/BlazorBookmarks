@@ -4,10 +4,10 @@ namespace Core
 {
     public interface IFacade
     {
-        State CurrentState { get; set; }
-
-        void Redo();
-        void Snapshot();
-        void Undo();
+        StateModel GetState();
+        StateModel GetStateFromStore();
+        StateModel Redo();
+        void Snapshot(StateModel state);
+        StateModel Undo();
     }
 }

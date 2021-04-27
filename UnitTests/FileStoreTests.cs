@@ -13,19 +13,19 @@ namespace UnitTests
         [Fact]
         public void CanSaveToFile()
         {
-            var folders = new List<Folder>()
+            var folders = new List<FolderModel>()
             {
-                new Folder() { Id = 1, Name = "Folder1", LastUpdated = DateTime.Now },
-                new Folder() { Id = 2, Name = "Folder2", LastUpdated = DateTime.Now },
-                new Folder() { Id = 3, Name = "Folder3", LastUpdated = DateTime.Now },
+                new FolderModel() { Id = 1, Name = "Folder1", LastUpdated = DateTime.Now },
+                new FolderModel() { Id = 2, Name = "Folder2", LastUpdated = DateTime.Now },
+                new FolderModel() { Id = 3, Name = "Folder3", LastUpdated = DateTime.Now },
             };
-            var bookmarks = new List<Bookmark>()
+            var bookmarks = new List<BookmarkModel>()
             {
-                new Bookmark() { Id = 1, FolderId = 1, Name = "Folder1_Bookmark1", Url = "https://folder1-bookmark1.com" },
-                new Bookmark() { Id = 2, FolderId = 1, Name = "Folder1_Bookmark2", Url = "https://folder1-bookmark2.com" },
-                new Bookmark() { Id = 3, FolderId = 2, Name = "Folder2_Bookmark1", Url = "https://folder2-bookmark1.com" },
+                new BookmarkModel() { Id = 1, FolderId = 1, Name = "Folder1_Bookmark1", Url = "https://folder1-bookmark1.com" },
+                new BookmarkModel() { Id = 2, FolderId = 1, Name = "Folder1_Bookmark2", Url = "https://folder1-bookmark2.com" },
+                new BookmarkModel() { Id = 3, FolderId = 2, Name = "Folder2_Bookmark1", Url = "https://folder2-bookmark1.com" },
             };
-            var state = new State() { Folders = folders, Bookmarks = bookmarks };
+            var state = new StateModel() { Folders = folders, Bookmarks = bookmarks };
             var store = new BookmarkFileStore();
 
             store.Save(state);
@@ -37,7 +37,7 @@ namespace UnitTests
             var store = new BookmarkFileStore();
             var state = store.Get();
 
-            state.Should().BeOfType(typeof(State));
+            state.Should().BeOfType(typeof(StateModel));
             state.Folders.Count.Should().Be(3);
             state.Bookmarks.Count.Should().Be(3);
             state.Bookmarks.Where(x => x.FolderId == 1).Count().Should().Be(2);

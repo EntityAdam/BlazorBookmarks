@@ -1,8 +1,52 @@
 ﻿@inject IFacade facade
 @page "/"
 
-<FolderContainer CurrentState="facade.CurrentState" />
+<FolderContainer CurrentState="State"
+                 SnapShotCallback="SnapShot"
+                 UndoCallback="BookmarkUndo"
+                 RedoCallback="BookmarkRedo" />
 
 @code {
-    
+    public StateModelUi State { get; set; }
+
+    protected override void OnInitialized()
+    {
+        State = MapToStateUi(facade.GetStateFromStore());
+        StateHasChanged();
+    }
+
+
+    public void SnapShot()
+    {
+        facade.Snapshot(MapToState(State));
+        Console.WriteLine("SnapShot: Calling Snapshot");
+    }
+
+    public void BookmarkUndo()
+    {
+        State = MapToStateUi(facade.Undo());
+        StateHasChanged();
+        Console.WriteLine("Undo: Statemanager Undo");
+    }
+
+    public void BookmarkRedo()
+    {
+        State = MapToStateUi(facade.Redo());
+        StateHasChanged();
+        Console.WriteLine("Redo: Statemanager Redo");
+    }
+
+    private static StateModel MapToState(StateModelUi stateModelUi)
+    {
+        var folders = stateModelUi.Folders.Select(x => new FolderModel() { Id = x.Id, Name = x.Name, LastUpdated = x.LastUpdated }).ToList();
+        var bookmarks = stateModelUi.Bookmarks.Select(x => new BookmarkModel() { Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url }).ToList();
+        return new StateModel(folders, bookmarks);
+    }
+
+    private static StateModelUi MapToStateUi(StateModel stateModel)
+    {
+        var folders = stateModel.Folders.Select(x => new FolderModelUi() { Id = x.Id, Name = x.Name, LastUpdated = x.LastUpdated }).ToList();
+        var bookmarks = stateModel.Bookmarks.Select(x => new BookmarkModelUi() { Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url }).ToList();
+        return new StateModelUi(folders, bookmarks);
+    }
 }

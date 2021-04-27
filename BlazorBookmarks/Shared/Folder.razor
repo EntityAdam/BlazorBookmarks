@@ -31,7 +31,7 @@
     public FolderContainer Container { get; set; }
 
     [Parameter]
-    public Core.Models.Folder ThisFolder { get; set; }
+    public FolderModelUi ThisFolder { get; set; }
 
     private int ThisLinkCollectionIndex { get; set; }
     private string IsVisibleCssClass => ThisFolder.Hidden ? "invisible" : "visible"; // TODO: Requires mapping! I don't want "Hidden" in my core logic
@@ -41,8 +41,10 @@
         ThisLinkCollectionIndex = Container.CurrentState.Folders.FindIndex(x => x.Id == ThisFolder.Id);
     }
 
-    public void HandleDragStart(Core.Models.Folder selectedCollection)
+    public void HandleDragStart(FolderModelUi selectedCollection)
     {
+        Container.SnapShotCallback.InvokeAsync();
+
         Container.CollectionPayload = selectedCollection;
         Container.CollectionPayload.Hidden = true;
     }
@@ -55,7 +57,7 @@
     {
     }
 
-    public void HandleDragOver(Core.Models.Folder collection)
+    public void HandleDragOver(FolderModelUi collection)
     {
         if (Container.CollectionPayload != null)
         {
@@ -68,7 +70,7 @@
         }
     }
 
-    public void HandleDrop(Core.Models.Folder dropTarget)
+    public void HandleDrop(FolderModelUi dropTarget)
     {
         if (Container.CollectionPayload != null)
         {

@@ -38,12 +38,14 @@
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    [Parameter] public Core.Models.Bookmark Link { get; set; }
+    [Parameter] public BookmarkModelUi Link { get; set; }
 
     private string IsVisibleCssClass => Link.Hidden ? "invisible" : "visible"; // TODO: Requires mapping! I don't want "Hidden" in my core logic
 
     public void HandleDragStart(DragEventArgs e)
     {
+        Container.SnapShotCallback.InvokeAsync();
+
         Container.LinkPayload = Link;
         Container.LinkPayload.Hidden = true;
     }
@@ -56,7 +58,7 @@
     {
     }
 
-    public void HandleDragOver(Core.Models.Bookmark target)
+    public void HandleDragOver(BookmarkModelUi target)
     {
         if (Container.LinkPayload == null)
             return;

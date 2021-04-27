@@ -23,7 +23,7 @@ namespace BlazorBookmarks
             services.AddServerSideBlazor();
             services.AddTransient<IFacade, Facade>();
             services.AddTransient<IBookmarkStore, BookmarkFileStore>();
-            services.AddTransient<IStateManager<State>, StateManager<State>>();
+            services.AddSingleton<IStateManager<StateModel>, StateManager<StateModel>>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

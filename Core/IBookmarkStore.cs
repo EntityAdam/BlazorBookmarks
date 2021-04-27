@@ -4,7 +4,7 @@ namespace Core
 {
     public interface IBookmarkStore
     {
-        public void Save(State state);
-        public State Get();
+        public void Save(StateModel state);
+        public StateModel Get();
     }
 }
