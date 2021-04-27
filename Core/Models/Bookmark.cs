@@ -13,6 +13,8 @@ namespace Core.Models
         public string Url { get; set; }
         public string Name { get; set; }
 
+        public bool Hidden { get; set; } // TODO: Requires mapping! I don't want "Hidden" in my core logic
+
         public Bookmark ShallowCopy() => (Bookmark)MemberwiseClone();
     }
 }

@@ -1,3 +1,5 @@
+using Core;
+using Core.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +21,9 @@ namespace BlazorBookmarks
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddTransient<IFacade, Facade>();
+            services.AddTransient<IBookmarkStore, BookmarkFileStore>();
+            services.AddTransient<IStateManager<State>, StateManager<State>>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

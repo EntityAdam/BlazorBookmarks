@@ -5,21 +5,21 @@
 <div class="flex flex-col bg-indigo-100 mx-1 px-1 py-1"
      draggable="true"
      dropzone="move"
-     @ondragstart="((e) => HandleDragStart(LinkCollection))"
+     @ondragstart="((e) => HandleDragStart(ThisFolder))"
      @ondragenter="((e) => HandleOnDragEnter())"
      @ondragleave="((e) => HandleOnDragLeave())"
      @ondragover:preventDefault
-     @ondragover="((e) => HandleDragOver(LinkCollection))"
-     @ondrop="((e) => HandleDrop(LinkCollection))">
+     @ondragover="((e) => HandleDragOver(ThisFolder))"
+     @ondrop="((e) => HandleDrop(ThisFolder))">
 
     <div class="@IsVisibleCssClass" style="pointer-events:none;">
         <div>
-            <h3 class="border-b-2" style="border-color: black;">@LinkCollection.Title  (@ThisLinkCollectionIndex)</h3>
+            <h3 class="border-b-2" style="border-color: black;">@ThisFolder.Name  (@ThisLinkCollectionIndex)</h3>
         </div>
         <ul class="px-2 py-5" style="pointer-events:auto">
-            @foreach (var i in Container.Links.Where(x => x.LinkCollectionId == LinkCollection.Id))
+            @foreach (var i in Container.CurrentState.Bookmarks.Where(x => x.FolderId == ThisFolder.Id))
             {
-                <LinkComponent Link="@i" />
+                <Bookmark Link="@i" />
             }
         </ul>
     </div>
@@ -28,20 +28,20 @@
 
 @code {
     [CascadingParameter]
-    public CollectionContainerComponent Container { get; set; }
+    public FolderContainer Container { get; set; }
 
     [Parameter]
-    public LinkCollection LinkCollection { get; set; }
+    public Core.Models.Folder ThisFolder { get; set; }
 
     private int ThisLinkCollectionIndex { get; set; }
-    private string IsVisibleCssClass => LinkCollection.Hidden ? "invisible" : "visible";
+    private string IsVisibleCssClass => ThisFolder.Hidden ? "invisible" : "visible"; // TODO: Requires mapping! I don't want "Hidden" in my core logic
 
     protected override void OnInitialized()
     {
-        ThisLinkCollectionIndex = Container.Collections.FindIndex(x => x.Id == LinkCollection.Id);
+        ThisLinkCollectionIndex = Container.CurrentState.Folders.FindIndex(x => x.Id == ThisFolder.Id);
     }
 
-    public void HandleDragStart(LinkCollection selectedCollection)
+    public void HandleDragStart(Core.Models.Folder selectedCollection)
     {
         Container.CollectionPayload = selectedCollection;
         Container.CollectionPayload.Hidden = true;
@@ -55,7 +55,7 @@
     {
     }
 
-    public void HandleDragOver(LinkCollection collection)
+    public void HandleDragOver(Core.Models.Folder collection)
     {
         if (Container.CollectionPayload != null)
         {
@@ -68,7 +68,7 @@
         }
     }
 
-    public void HandleDrop(LinkCollection dropTarget)
+    public void HandleDrop(Core.Models.Folder dropTarget)
     {
         if (Container.CollectionPayload != null)
         {

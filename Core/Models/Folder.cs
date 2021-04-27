@@ -12,6 +12,8 @@ namespace Core.Models
         public string Name { get; set; }
         public DateTime LastUpdated { get; set; }
 
+        public bool Hidden { get; set; } // TODO: Requires mapping! I don't want "Hidden" in my core logic
+
         public Folder ShallowCopy() => (Folder)MemberwiseClone();
     }
 }
