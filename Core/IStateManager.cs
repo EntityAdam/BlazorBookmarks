@@ -1,6 +1,4 @@
-﻿using StateService.Models;
-
-namespace StateService
+﻿namespace Core
 {
     public interface IStateManager<T>
     {
@@ -8,6 +6,7 @@ namespace StateService
 
         T Redo();
         T Undo();
-        void UpdateState(T state);
+        void LoadState(T state);
+        void Snapshot(T state);
     }
 }

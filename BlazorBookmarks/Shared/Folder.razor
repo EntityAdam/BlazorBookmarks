@@ -1,0 +1,87 @@
+﻿@*
+   ondrop="handleOnDrop(event)"
+*@
+
+<div class="flex flex-col bg-indigo-100 mx-1 px-1 py-1"
+     draggable="true"
+     dropzone="move"
+     @ondragstart="((e) => HandleDragStart(ThisFolder))"
+     @ondragenter="((e) => HandleOnDragEnter())"
+     @ondragleave="((e) => HandleOnDragLeave())"
+     @ondragover:preventDefault
+     @ondragover="((e) => HandleDragOver(ThisFolder))"
+     @ondrop="((e) => HandleDrop(ThisFolder))">
+
+    <div class="@IsVisibleCssClass" style="pointer-events:none;">
+        <div>
+            <h3 class="border-b-2" style="border-color: black;">@ThisFolder.Name</h3>
+        </div>
+        <ul class="px-2 py-5" style="pointer-events:auto">
+            @foreach (var i in Container.CurrentState.Bookmarks.Where(x => x.FolderId == ThisFolder.Id))
+            {
+                <Bookmark Link="@i" />
+            }
+        </ul>
+    </div>
+</div>
+
+
+@code {
+    [CascadingParameter]
+    public FolderContainer Container { get; set; }
+
+    [Parameter]
+    public FolderModelUi ThisFolder { get; set; }
+
+    private string IsVisibleCssClass => ThisFolder.Hidden ? "invisible" : "visible";
+
+    public void HandleDragStart(FolderModelUi selectedCollection)
+    {
+        Container.FolderDragPayload = selectedCollection;
+        Container.FolderDragPayload.Hidden = true;
+    }
+
+    public void HandleOnDragEnter()
+    {
+    }
+
+    public void HandleOnDragLeave()
+    {
+    }
+
+    public void HandleDragOver(FolderModelUi collection)
+    {
+        if (Container.FolderDragPayload != null)
+        {
+            Container.MoveFolderPosition(collection.Id, Container.FolderDragPayload);
+        }
+
+        if (Container.BookmarkDragPayload != null)
+        {
+            Container.MoveBookmarkToFolder(collection);
+        }
+    }
+
+    public void HandleDrop(FolderModelUi dropTarget)
+    {
+        if (Container.FolderDragPayload != null)
+        {
+            Container.FolderDragPayload.Hidden = false;
+            Container.FolderDragPayload = null;
+            Container.SnapShotCallback.InvokeAsync();
+        }
+
+        if (Container.BookmarkDragPayload != null)
+        {
+            Container.BookmarkDragPayload.Hidden = false;
+            Container.BookmarkDragPayload = null;
+            Container.SnapShotCallback.InvokeAsync();
+        }
+    }
+
+    [JSInvokable]
+    public static void UrlDrop(string url)
+    {
+        var result = url.Replace(System.Environment.NewLine, string.Empty);
+    }
+}

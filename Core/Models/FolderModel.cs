@@ -1,13 +1,12 @@
 ﻿using System;
 
-namespace StateService.Models
+namespace Core.Models
 {
-    public class Folder
+    public class FolderModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime LastUpdated { get; set; }
-
-        public Folder ShallowCopy() => (Folder)MemberwiseClone();
+        public FolderModel ShallowCopy() => (FolderModel)MemberwiseClone();
     }
 }

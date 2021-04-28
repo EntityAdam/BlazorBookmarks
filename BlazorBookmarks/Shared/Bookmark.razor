@@ -34,18 +34,18 @@
 
 @code {
     [CascadingParameter]
-    public CollectionContainerComponent Container { get; set; }
+    public FolderContainer Container { get; set; }
 
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    [Parameter] public Link Link { get; set; }
+    [Parameter] public BookmarkModelUi Link { get; set; }
 
-    private string IsVisibleCssClass => Link.Hidden ? "invisible" : "visible";
+    private string IsVisibleCssClass => Link.Hidden ? "invisible" : "visible"; // TODO: Requires mapping! I don't want "Hidden" in my core logic
 
     public void HandleDragStart(DragEventArgs e)
     {
-        Container.LinkPayload = Link;
-        Container.LinkPayload.Hidden = true;
+        Container.BookmarkDragPayload = Link;
+        Container.BookmarkDragPayload.Hidden = true;
     }
 
     public void HandleOnDragEnter()
@@ -56,19 +56,19 @@
     {
     }
 
-    public void HandleDragOver(Link target)
+    public void HandleDragOver(BookmarkModelUi target)
     {
-        if (Container.LinkPayload == null)
+        if (Container.BookmarkDragPayload == null)
             return;
-        Container.MoveLinkPayloadTo(target);
+        Container.MoveBookmarkPosition(target);
     }
 
     public void HandleDrop()
     {
-        if (Container.LinkPayload == null)
+        if (Container.BookmarkDragPayload == null)
             return;
-        Container.LinkPayload.Hidden = false;
-        Container.LinkPayload = null;
+        Container.BookmarkDragPayload.Hidden = false;
+        Container.BookmarkDragPayload = null;
     }
 
     public void Navigate()
@@ -79,6 +79,6 @@
 
     public void Delete()
     {
-        Container.Remove(Link);
+        Container.RemoveBookmark(Link);
     }
 }

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 
 namespace StateService
 {
-    public sealed class StateManager : IStateManager
+    public sealed class StateManagerBase<T> : IStateManager<T>
     {
-        private readonly Stack<State> UndoStack = new Stack<State>();
-        private readonly Stack<State> RedoStack = new Stack<State>();
-        private State CurrentState { get; set; }
+        private readonly Stack<T> UndoStack = new();
+        private readonly Stack<T> RedoStack = new();
+        
+        public T CurrentState { get; private set; }
 
-        public void UpdateState(State state)
+        public void UpdateState(T state)
         {
             if (CurrentState != null)
             {
@@ -18,7 +19,7 @@ namespace StateService
             CurrentState = state;
         }
 
-        public State Redo()
+        public T Redo()
         {
             if (RedoStack.Count > 0)
             {
@@ -28,7 +29,7 @@ namespace StateService
             return CurrentState;
         }
         
-        public State Undo()
+        public T Undo()
         {
             if (UndoStack.Count > 0)
             {

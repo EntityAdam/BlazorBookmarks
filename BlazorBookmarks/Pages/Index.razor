@@ -1,31 +1,72 @@
-﻿@page "/"
+﻿@inject IFacade facade
+@page "/"
 
-<CollectionContainerComponent Collections="Collections" Links="Links" />
+<h1 class="text-4xl">Bookmarks</h1>
+
+<FolderContainer CurrentState="State"
+                 SnapShotCallback="SnapShot"
+                 UndoCallback="BookmarkUndo"
+                 RedoCallback="BookmarkRedo" />
+<div>
+    <h2>Features:</h2>
+    <ul>
+        <li>[X] Organize folders with drag and drop</li>
+        <li>[X] Organize bookmarks with drag and drop</li>
+        <li>[X] Undo and Redo</li>
+        <li>[X] Save between sessions</li>
+        <li>[ ] Remove old bookmarks (added N months ago)</li>
+        <li>[ ] Remove bookmarks never used (never clicked on)</li>
+        <li>[ ] Drop URLs from the address bar</li>
+        <li>[ ] Drop URLs from the bookmarks bar</li>
+        <li>[ ] Import bookmarks from broswer export</li>
+        <li>[ ] Export bookmarks to broswer export</li>
+
+    </ul>
+</div>
+
+
 
 @code {
-    public List<Link> Links = new List<Link>();
-    public List<LinkCollection> Collections = new List<LinkCollection>();
+    public StateModelUi State { get; set; }
 
     protected override void OnInitialized()
     {
-        //Collections
-        Collections.Add(new LinkCollection() { Id = 1, Title = "Work", LastUpdated = DateTime.Now });
-        Collections.Add(new LinkCollection() { Id = 2, Title = "Games", LastUpdated = DateTime.Now });
-        Collections.Add(new LinkCollection() { Id = 3, Title = "Stuff", LastUpdated = DateTime.Now });
-        Collections.Add(new LinkCollection() { Id = 4, Title = "Junk", LastUpdated = DateTime.Now });
-        Collections.Add(new LinkCollection() { Id = 5, Title = "Things", LastUpdated = DateTime.Now });
-        Collections.Add(new LinkCollection() { Id = 6, Title = "Apps", LastUpdated = DateTime.Now });
+        State = MapToStateUi(facade.GetStateFromStore());
+        StateHasChanged();
+    }
 
-        //Work Links
-        Links.Add(new Link() { Id = 1, LinkCollectionId = 1, Url = "https://www.entityadam.com", Name = "HR" });
-        Links.Add(new Link() { Id = 2, LinkCollectionId = 1, Url = "https://www.entityadam.com", Name = "Career Framework" });
-        Links.Add(new Link() { Id = 3, LinkCollectionId = 1, Url = "https://www.entityadam.com", Name = "Sharepoint" });
-        Links.Add(new Link() { Id = 4, LinkCollectionId = 1, Url = "https://www.entityadam.com", Name = "Teams" });
-        Links.Add(new Link() { Id = 5, LinkCollectionId = 1, Url = "https://www.entityadam.com", Name = "Projects" });
-        Links.Add(new Link() { Id = 6, LinkCollectionId = 1, Url = "https://www.entityadam.com", Name = "Azure Portal" });
 
-        //Games Links
-        Links.Add(new Link() { Id = 7, LinkCollectionId = 2, Url = "https://www.entityadam.com", Name = "Monster Hunter" });
-        Links.Add(new Link() { Id = 8, LinkCollectionId = 2, Url = "https://www.entityadam.com", Name = "Bloons TD6" });
+    public void SnapShot()
+    {
+        facade.Snapshot(MapToState(State));
+        Console.WriteLine("SnapShot: Calling Snapshot");
+    }
+
+    public void BookmarkUndo()
+    {
+        State = MapToStateUi(facade.Undo());
+        StateHasChanged();
+        Console.WriteLine("Undo: Statemanager Undo");
+    }
+
+    public void BookmarkRedo()
+    {
+        State = MapToStateUi(facade.Redo());
+        StateHasChanged();
+        Console.WriteLine("Redo: Statemanager Redo");
+    }
+
+    private static StateModel MapToState(StateModelUi stateModelUi)
+    {
+        var folders = stateModelUi.Folders.Select(x => new FolderModel() { Id = x.Id, Name = x.Name, LastUpdated = x.LastUpdated }).ToList();
+        var bookmarks = stateModelUi.Bookmarks.Select(x => new BookmarkModel() { Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url }).ToList();
+        return new StateModel(folders, bookmarks);
+    }
+
+    private static StateModelUi MapToStateUi(StateModel stateModel)
+    {
+        var folders = stateModel.Folders.Select(x => new FolderModelUi() { Id = x.Id, Name = x.Name, LastUpdated = x.LastUpdated }).ToList();
+        var bookmarks = stateModel.Bookmarks.Select(x => new BookmarkModelUi() { Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url }).ToList();
+        return new StateModelUi(folders, bookmarks);
     }
 }
