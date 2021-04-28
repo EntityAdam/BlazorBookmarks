@@ -1,6 +1,4 @@
 ﻿using Core.Models;
-using System;
-using System.Linq;
 
 namespace Core
 {
@@ -24,8 +22,23 @@ namespace Core
             stateManager.Snapshot(state);
             return state;
         }
-        public StateModel Redo() => stateManager.Redo();
-        public void Snapshot(StateModel state) => stateManager.Snapshot(state);
-        public StateModel Undo() => stateManager.Undo();
+        public StateModel Redo()
+        {
+            var state = stateManager.Redo();
+            SaveStateToStore(state);
+            return state;
+        }
+        public void SaveStateToStore(StateModel state) => bookmarkStore.Save(state);
+        public void Snapshot(StateModel state)
+        {
+            stateManager.Snapshot(state);
+            SaveStateToStore(state);
+        }
+        public StateModel Undo()
+        {
+            var state = stateManager.Undo();
+            SaveStateToStore(state);
+            return state;
+        }
     }
 }

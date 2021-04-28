@@ -1,10 +1,30 @@
 ﻿@inject IFacade facade
 @page "/"
 
+<h1 class="text-4xl">Bookmarks</h1>
+
 <FolderContainer CurrentState="State"
                  SnapShotCallback="SnapShot"
                  UndoCallback="BookmarkUndo"
                  RedoCallback="BookmarkRedo" />
+<div>
+    <h2>Features:</h2>
+    <ul>
+        <li>[X] Organize folders with drag and drop</li>
+        <li>[X] Organize bookmarks with drag and drop</li>
+        <li>[X] Undo and Redo</li>
+        <li>[X] Save between sessions</li>
+        <li>[ ] Remove old bookmarks (added N months ago)</li>
+        <li>[ ] Remove bookmarks never used (never clicked on)</li>
+        <li>[ ] Drop URLs from the address bar</li>
+        <li>[ ] Drop URLs from the bookmarks bar</li>
+        <li>[ ] Import bookmarks from broswer export</li>
+        <li>[ ] Export bookmarks to broswer export</li>
+
+    </ul>
+</div>
+
+
 
 @code {
     public StateModelUi State { get; set; }

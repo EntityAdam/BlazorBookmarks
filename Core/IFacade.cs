@@ -7,6 +7,7 @@ namespace Core
         StateModel GetState();
         StateModel GetStateFromStore();
         StateModel Redo();
+        void SaveStateToStore(StateModel state);
         void Snapshot(StateModel state);
         StateModel Undo();
     }
