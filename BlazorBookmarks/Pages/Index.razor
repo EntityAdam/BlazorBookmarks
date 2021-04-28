@@ -14,13 +14,21 @@
         <li>[X] Organize bookmarks with drag and drop</li>
         <li>[X] Undo and Redo</li>
         <li>[X] Save between sessions</li>
+        <li>[ ] Edit bookmark modal</li>
         <li>[ ] Remove old bookmarks (added N months ago)</li>
+        <li>[ ] Track created date</li>
         <li>[ ] Remove bookmarks never used (never clicked on)</li>
+        <li>[ ] Track last clicked on date</li>
         <li>[ ] Drop URLs from the address bar</li>
         <li>[ ] Drop URLs from the bookmarks bar</li>
         <li>[ ] Import bookmarks from broswer export</li>
         <li>[ ] Export bookmarks to broswer export</li>
 
+    </ul>
+    <h2>Bugs to fix:</h2>
+    <ul>
+        <li>[ ] Moving folders doesn't hide the target folder bookmarks</li>
+        <li>[ ] Clicking the launch icon on a bookmark launches it twice</li>
     </ul>
 </div>
 
@@ -39,21 +47,18 @@
     public void SnapShot()
     {
         facade.Snapshot(MapToState(State));
-        Console.WriteLine("SnapShot: Calling Snapshot");
     }
 
     public void BookmarkUndo()
     {
         State = MapToStateUi(facade.Undo());
         StateHasChanged();
-        Console.WriteLine("Undo: Statemanager Undo");
     }
 
     public void BookmarkRedo()
     {
         State = MapToStateUi(facade.Redo());
         StateHasChanged();
-        Console.WriteLine("Redo: Statemanager Redo");
     }
 
     private static StateModel MapToState(StateModelUi stateModelUi)
