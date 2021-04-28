@@ -14,7 +14,7 @@
 
     <div class="@IsVisibleCssClass" style="pointer-events:none;">
         <div>
-            <h3 class="border-b-2" style="border-color: black;">@ThisFolder.Name  (@ThisLinkCollectionIndex)</h3>
+            <h3 class="border-b-2" style="border-color: black;">@ThisFolder.Name</h3>
         </div>
         <ul class="px-2 py-5" style="pointer-events:auto">
             @foreach (var i in Container.CurrentState.Bookmarks.Where(x => x.FolderId == ThisFolder.Id))
@@ -33,20 +33,12 @@
     [Parameter]
     public FolderModelUi ThisFolder { get; set; }
 
-    private int ThisLinkCollectionIndex { get; set; }
-    private string IsVisibleCssClass => ThisFolder.Hidden ? "invisible" : "visible"; // TODO: Requires mapping! I don't want "Hidden" in my core logic
-
-    protected override void OnInitialized()
-    {
-        ThisLinkCollectionIndex = Container.CurrentState.Folders.FindIndex(x => x.Id == ThisFolder.Id);
-    }
+    private string IsVisibleCssClass => ThisFolder.Hidden ? "invisible" : "visible";
 
     public void HandleDragStart(FolderModelUi selectedCollection)
     {
-        Container.SnapShotCallback.InvokeAsync();
-
-        Container.CollectionPayload = selectedCollection;
-        Container.CollectionPayload.Hidden = true;
+        Container.FolderDragPayload = selectedCollection;
+        Container.FolderDragPayload.Hidden = true;
     }
 
     public void HandleOnDragEnter()
@@ -59,29 +51,31 @@
 
     public void HandleDragOver(FolderModelUi collection)
     {
-        if (Container.CollectionPayload != null)
+        if (Container.FolderDragPayload != null)
         {
-            Container.MoveCollectionTo(collection.Id, Container.CollectionPayload);
+            Container.MoveFolderPosition(collection.Id, Container.FolderDragPayload);
         }
 
-        if (Container.LinkPayload != null)
+        if (Container.BookmarkDragPayload != null)
         {
-            Container.MoveLinkPayloadTo(collection);
+            Container.MoveBookmarkToFolder(collection);
         }
     }
 
     public void HandleDrop(FolderModelUi dropTarget)
     {
-        if (Container.CollectionPayload != null)
+        if (Container.FolderDragPayload != null)
         {
-            Container.CollectionPayload.Hidden = false;
-            Container.CollectionPayload = null;
+            Container.FolderDragPayload.Hidden = false;
+            Container.FolderDragPayload = null;
+            Container.SnapShotCallback.InvokeAsync();
         }
 
-        if (Container.LinkPayload != null)
+        if (Container.BookmarkDragPayload != null)
         {
-            Container.LinkPayload.Hidden = false;
-            Container.LinkPayload = null;
+            Container.BookmarkDragPayload.Hidden = false;
+            Container.BookmarkDragPayload = null;
+            Container.SnapShotCallback.InvokeAsync();
         }
     }
 

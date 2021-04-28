@@ -17,7 +17,13 @@ namespace Core
         }
 
         public StateModel GetState() => stateManager.CurrentState;
-        public StateModel GetStateFromStore() => bookmarkStore.Get();
+        public StateModel GetStateFromStore()
+        {
+            var state = bookmarkStore.Get();
+            stateManager.LoadState(state);
+            stateManager.Snapshot(state);
+            return state;
+        }
         public StateModel Redo() => stateManager.Redo();
         public void Snapshot(StateModel state) => stateManager.Snapshot(state);
         public StateModel Undo() => stateManager.Undo();

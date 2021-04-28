@@ -26,48 +26,48 @@
     [Parameter]
     public EventCallback RedoCallback { get; set; }
 
-    public FolderModelUi CollectionPayload { get; set; }
-    public FolderModelUi IsOverCollection { get; set; }
-    public BookmarkModelUi LinkPayload { get; set; }
+    public FolderModelUi FolderDragPayload { get; set; }
 
-    public void MoveCollectionTo(int targetId, FolderModelUi item)
+    public BookmarkModelUi BookmarkDragPayload { get; set; }
+
+    public void MoveFolderPosition(int dragTargetFolderId, FolderModelUi folderDragPayload)
     {
-        var index = CurrentState.Folders.FindIndex(x => x.Id == targetId);
-        if (index >= 0)
+        var dragTargetIndex = CurrentState.Folders.FindIndex(x => x.Id == dragTargetFolderId);
+        if (dragTargetIndex >= 0)
         {
-            CurrentState.Folders.RemoveAll(x => x.Id == CollectionPayload.Id);
-            CurrentState.Folders.Insert(index, item);
+            CurrentState.Folders.RemoveAll(x => x.Id == FolderDragPayload.Id);
+            CurrentState.Folders.Insert(dragTargetIndex, folderDragPayload);
         }
         StateHasChanged();
     }
 
-    public void MoveLinkPayloadTo(BookmarkModelUi target)
+    public void MoveBookmarkPosition(BookmarkModelUi dragTargetBookmark)
     {
-        LinkPayload.FolderId = target.FolderId;
-        var index = CurrentState.Bookmarks.FindIndex(x => x == target);
+        BookmarkDragPayload.FolderId = dragTargetBookmark.FolderId;
+        var index = CurrentState.Bookmarks.FindIndex(x => x == dragTargetBookmark);
         if (index >= 0)
         {
-            CurrentState.Bookmarks.RemoveAll(x => x == LinkPayload);
-            CurrentState.Bookmarks.Insert(index, LinkPayload);
+            CurrentState.Bookmarks.RemoveAll(x => x == BookmarkDragPayload);
+            CurrentState.Bookmarks.Insert(index, BookmarkDragPayload);
         }
         StateHasChanged();
     }
 
-    public void MoveLinkPayloadTo(FolderModelUi target)
+    public void MoveBookmarkToFolder(FolderModelUi target)
     {
-        LinkPayload.FolderId = target.Id;
+        BookmarkDragPayload.FolderId = target.Id;
+        StateHasChanged();
+    }
+
+    public void RemoveBookmark(BookmarkModelUi linkToDelete)
+    {
+        CurrentState.Bookmarks.RemoveAll(x => x == linkToDelete);
         StateHasChanged();
     }
 
     public void Navigate(BookmarkModelUi linkToNavigate)
     {
         navigationManager.NavigateTo(linkToNavigate.Url, true);
-    }
-
-    public void Remove(BookmarkModelUi linkToDelete)
-    {
-        CurrentState.Bookmarks.RemoveAll(x => x == linkToDelete);
-        StateHasChanged();
     }
 
     public void HandleKeyPress(KeyboardEventArgs e)

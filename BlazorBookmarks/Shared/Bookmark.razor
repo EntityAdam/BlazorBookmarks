@@ -44,10 +44,8 @@
 
     public void HandleDragStart(DragEventArgs e)
     {
-        Container.SnapShotCallback.InvokeAsync();
-
-        Container.LinkPayload = Link;
-        Container.LinkPayload.Hidden = true;
+        Container.BookmarkDragPayload = Link;
+        Container.BookmarkDragPayload.Hidden = true;
     }
 
     public void HandleOnDragEnter()
@@ -60,17 +58,17 @@
 
     public void HandleDragOver(BookmarkModelUi target)
     {
-        if (Container.LinkPayload == null)
+        if (Container.BookmarkDragPayload == null)
             return;
-        Container.MoveLinkPayloadTo(target);
+        Container.MoveBookmarkPosition(target);
     }
 
     public void HandleDrop()
     {
-        if (Container.LinkPayload == null)
+        if (Container.BookmarkDragPayload == null)
             return;
-        Container.LinkPayload.Hidden = false;
-        Container.LinkPayload = null;
+        Container.BookmarkDragPayload.Hidden = false;
+        Container.BookmarkDragPayload = null;
     }
 
     public void Navigate()
@@ -81,6 +79,6 @@
 
     public void Delete()
     {
-        Container.Remove(Link);
+        Container.RemoveBookmark(Link);
     }
 }

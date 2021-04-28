@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Text.Json;
 
 namespace Core
 {
@@ -35,9 +38,20 @@ namespace Core
             if (UndoStack.Count > 0)
             {
                 RedoStack.Push(CurrentState);
+                Console.WriteLine("---------- Current state ----------");
+                PrintState(CurrentState);
+                Console.WriteLine("---------- Pulling off the undo stack ----------");
+                PrintState(UndoStack.Peek());
                 CurrentState = UndoStack.Pop();
             }
             return CurrentState;
+        }
+
+        public static void PrintState(T state)
+        {
+            var options = new JsonSerializerOptions() { WriteIndented = true };
+            var jsonContent = JsonSerializer.Serialize(state, new JsonSerializerOptions(options));
+            Console.WriteLine(jsonContent);
         }
     }
 }
