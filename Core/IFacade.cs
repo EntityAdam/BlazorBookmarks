@@ -4,6 +4,9 @@ namespace Core
 {
     public interface IFacade
     {
+        void DeleteFolder(int folderId);
+        void DeleteBookmark(int bookmarkId);
+       
         StateModel GetState();
         StateModel GetStateFromStore();
         StateModel Redo();

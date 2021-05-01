@@ -202,5 +202,21 @@ namespace UnitTests
 
             var x = folders;
         }
+
+        [Fact]
+        public void Should_DeleteBookmarks_AndUndo()
+        {
+            var orig = new Facade(new StateManager<StateModel>(), new BookmarkMemoryStore());
+            var folder1 = new FolderModel { Id = 1, Name = "Folder1" };
+            var folder2 = new FolderModel { Id = 2, Name = "Folder2" };
+            var folders = new List<FolderModel>() { folder1, folder2 };
+            var state1 = new StateModel(folders, new List<BookmarkModel>());
+            orig.Snapshot(state1);
+
+            orig.DeleteFolder(2);
+
+            orig.GetState().Folders.Count.Should().Be(1);
+            orig.GetState().Folders[0].Name.Should().Be("Folder1");
+        }
     }
 }

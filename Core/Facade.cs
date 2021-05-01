@@ -14,6 +14,19 @@ namespace Core
             this.bookmarkStore = bookmarkStore;
         }
 
+        public void DeleteBookmark(int bookmarkId)
+        {
+            GetState().Bookmarks.RemoveAll(x => x.Id == bookmarkId);
+            Snapshot(GetState());
+        }
+
+        public void DeleteFolder(int folderId)
+        {
+            GetState().Folders.RemoveAll(x => x.Id == folderId);
+            GetState().Bookmarks.RemoveAll(x => x.FolderId == folderId);
+            Snapshot(GetState());
+        }
+
         public StateModel GetState() => stateManager.CurrentState;
         public StateModel GetStateFromStore()
         {
