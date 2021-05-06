@@ -6,7 +6,8 @@
 <FolderContainer CurrentState="State"
                  SnapShotCallback="SnapShot"
                  UndoCallback="BookmarkUndo"
-                 RedoCallback="BookmarkRedo" />
+                 RedoCallback="BookmarkRedo"
+                 DeleteBookmarkCallback="BookmarkDelete" />
 <div>
     <h2>Features:</h2>
     <ul>
@@ -14,7 +15,7 @@
         <li>[X] Organize bookmarks with drag and drop</li>
         <li>[X] Undo and Redo</li>
         <li>[X] Save between sessions</li>
-        <li>[ ] Delete Bookmarks</li>
+        <li>[X] Delete Bookmarks</li>
         <li>[ ] Edit bookmark modal</li>
         <li>[ ] Remove old bookmarks (added N months ago)</li>
         <li>[ ] Track created date</li>
@@ -59,6 +60,11 @@
     {
         State = MapToStateUi(facade.Redo());
         StateHasChanged();
+    }
+
+    public void BookmarkDelete(int id)
+    {
+        facade.DeleteBookmark(id);
     }
 
     private static StateModel MapToState(StateModelUi stateModelUi)

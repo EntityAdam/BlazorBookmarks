@@ -26,6 +26,9 @@
     [Parameter]
     public EventCallback RedoCallback { get; set; }
 
+    [Parameter]
+    public EventCallback<int> DeleteBookmarkCallback { get; set; }
+
     public FolderModelUi FolderDragPayload { get; set; }
 
     public BookmarkModelUi BookmarkDragPayload { get; set; }
@@ -62,6 +65,7 @@
     public void RemoveBookmark(BookmarkModelUi linkToDelete)
     {
         CurrentState.Bookmarks.RemoveAll(x => x == linkToDelete);
+        SnapShotCallback.InvokeAsync().Wait();
         StateHasChanged();
     }
 
