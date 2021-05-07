@@ -5,7 +5,7 @@
      @ondragenter="((e) => HandleOnDragEnter())"
      @ondragleave="((e) => HandleOnDragLeave())"
      @ondragover:preventDefault
-     @ondragover="((e) => HandleDragOver(ThisFolder))"
+     @ondragover="((e) => HandleDragOver(Model))"
      @ondrop="((e) => HandleDrop(Model))">
 
     <div class="@IsVisibleCssClass" style="pointer-events:none;">
