@@ -11,12 +11,12 @@
 @code {
 
     [Parameter]
+    public int BookmarkId { get; set; }
+    
+    [Parameter]
     public EventCallback<int> DeleteCallback { get; set; }
 
-    [Parameter]
-    public int BookmarkId { get; set; }
-
-    public void HandleDelete()
+    private void HandleDelete()
     {
         DeleteCallback.InvokeAsync(BookmarkId);
     }

@@ -8,7 +8,7 @@
     <CascadingValue Value="@this">
         @foreach (var folder in CurrentState.Folders)
         {
-            <Folder ThisFolder="@folder" />
+            <Folder Model="@folder" />
         }
     </CascadingValue>
 </div>
@@ -74,7 +74,7 @@
         navigationManager.NavigateTo(linkToNavigate.Url, true);
     }
 
-    public void HandleKeyPress(KeyboardEventArgs e)
+    private void HandleKeyPress(KeyboardEventArgs e)
     {
         var keys = e;
         if (e.CtrlKey)

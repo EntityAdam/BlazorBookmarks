@@ -2,12 +2,11 @@
 @page "/"
 
 <h1 class="text-4xl">Bookmarks</h1>
-
-<FolderContainer CurrentState="State"
-                 SnapShotCallback="SnapShot"
-                 UndoCallback="BookmarkUndo"
-                 RedoCallback="BookmarkRedo"
-                 DeleteBookmarkCallback="BookmarkDelete" />
+    <FolderContainer CurrentState="State"
+                     SnapShotCallback="SnapShot"
+                     UndoCallback="BookmarkUndo"
+                     RedoCallback="BookmarkRedo"
+                     DeleteBookmarkCallback="BookmarkDelete" />
 <div>
     <h2>Features:</h2>
     <ul>
@@ -33,11 +32,11 @@
         <li>[ ] Clicking the launch icon on a bookmark launches it twice</li>
     </ul>
 </div>
-
+<EditBookmarkModal ShowEditCallback="ShowEdit"/>
 
 
 @code {
-    public StateModelUi State { get; set; }
+    private StateModelUi State { get; set; }
 
     protected override void OnInitialized()
     {
@@ -45,26 +44,31 @@
         StateHasChanged();
     }
 
-    public void SnapShot()
+    private void SnapShot()
     {
         facade.Snapshot(MapToState(State));
     }
 
-    public void BookmarkUndo()
+    private void BookmarkUndo()
     {
         State = MapToStateUi(facade.Undo());
         StateHasChanged();
     }
 
-    public void BookmarkRedo()
+    private void BookmarkRedo()
     {
         State = MapToStateUi(facade.Redo());
         StateHasChanged();
     }
 
-    public void BookmarkDelete(int id)
+    private void BookmarkDelete(int id)
     {
         facade.DeleteBookmark(id);
+    }
+
+    private void ShowEdit()
+    {
+        
     }
 
     private static StateModel MapToState(StateModelUi stateModelUi)
