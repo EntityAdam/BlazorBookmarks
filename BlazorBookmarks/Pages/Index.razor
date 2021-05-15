@@ -32,7 +32,7 @@
         <li>[X] Clicking the launch icon on a bookmark launches it twice</li>
     </ul>
 </div>
-<EditBookmarkModal ShowEditCallback="ShowEdit"/>
+<EditBookmarkModal />
 
 
 @code {
@@ -64,11 +64,6 @@
     private void BookmarkDelete(int id)
     {
         facade.DeleteBookmark(id);
-    }
-
-    private void ShowEdit()
-    {
-        
     }
 
     private static StateModel MapToState(StateModelUi stateModelUi)
