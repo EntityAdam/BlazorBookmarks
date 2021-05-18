@@ -1,19 +1,33 @@
 ﻿@inject NavigationManager navigationManager
 @inject IFacade facade
 
-<div class="flex py-2 px-2 bg-gray-200"
-     tabindex="1"
-     @onkeypress="((e) => HandleKeyPress(e))"
-     @onkeypress:preventDefault>
+@if (IsEditMode)
+{
     <CascadingValue Value="@this">
-        @foreach (var folder in CurrentState.Folders)
-        {
-            <Folder Model="@folder" />
-        }
+        <EditBookmark/>
     </CascadingValue>
-</div>
+}
+else
+{
+    <div class="flex flex-wrap items-baseline bg-black"
+         tabindex="1"
+         @onkeypress="((e) => HandleKeyPress(e))"
+         @onkeypress:preventDefault>
+        <CascadingValue Value="@this">
+            @foreach (var folder in CurrentState.Folders)
+            {
+                <Folder Model="@folder"/>
+            }
+            <Addfolder />
+        </CascadingValue>
+    </div>
+}
+
+
+
 
 @code {
+
     [Parameter]
     public StateModelUi CurrentState { get; set; }
 
@@ -33,6 +47,13 @@
 
     public BookmarkModelUi BookmarkDragPayload { get; set; }
 
+    private bool IsEditMode { get; set; } = false;
+
+    public void AddFolder(string folderName)
+    {
+        facade.AddFolder(folderName);
+    }
+    
     public void MoveFolderPosition(int dragTargetFolderId, FolderModelUi folderDragPayload)
     {
         var dragTargetIndex = CurrentState.Folders.FindIndex(x => x.Id == dragTargetFolderId);
@@ -89,4 +110,17 @@
             }
         }
     }
+
+    public void EditBookmark(int bookmarkId)
+    {
+        IsEditMode = true;
+        StateHasChanged();
+    }
+
+    public void CancelEdit()
+    {
+        IsEditMode = false;
+        StateHasChanged();
+    }
+
 }

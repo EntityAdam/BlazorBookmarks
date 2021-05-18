@@ -1,4 +1,6 @@
-﻿using Core.Models;
+﻿using System;
+using System.Linq;
+using Core.Models;
 
 namespace Core
 {
@@ -18,6 +20,12 @@ namespace Core
         {
             GetState().Bookmarks.RemoveAll(x => x.Id == bookmarkId);
             Snapshot(GetState());
+        }
+
+        public void AddFolder(string folderName)
+        {
+            var index = GetState().Folders.Max(x => x.Id) +1 ;
+            GetState().Folders.Add(new FolderModel() { Id = index, Name = folderName, LastUpdated = DateTime.Now });
         }
 
         public void DeleteFolder(int folderId)

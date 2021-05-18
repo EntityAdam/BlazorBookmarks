@@ -1,4 +1,4 @@
-﻿<div class="flex flex-col bg-indigo-100 mx-1 px-1 py-1"
+﻿<div class="flex flex-col flex-grow mb-1 mx-2 resize-x overflow-auto bg-indigo-100" style="flex-basis: auto;"
      draggable="true"
      dropzone="move"
      @ondragstart="((e) => HandleDragStart(Model))"
@@ -10,7 +10,7 @@
 
     <div class="@IsVisibleCssClass" style="pointer-events:none;">
         <div>
-            <h3 class="border-b-2" style="border-color: black;">@Model.Name</h3>
+            <h3 @onclick:stopPropagation @onclick="HandleEditFolderTitle" class="border-b-2" style="border-color: black;">@Model.Name</h3>
         </div>
         <ul class="px-2 py-5" style="pointer-events:auto">
             @foreach (var b in Container.CurrentState.Bookmarks.Where(x => x.FolderId == Model.Id))
@@ -31,6 +31,11 @@
     public FolderModelUi Model { get; set; }
 
     private string IsVisibleCssClass => Model.Hidden ? "invisible" : "visible";
+
+    private void HandleEditFolderTitle()
+    {
+        //show edit screen
+    }
 
     private void HandleDragStart(FolderModelUi selectedCollection)
     {

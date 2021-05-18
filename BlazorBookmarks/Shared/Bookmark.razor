@@ -25,7 +25,7 @@
     <div @onclick="Navigate" class="flex justify-between">
         <p>@Model.Name</p>
         <div class="flex justify-end ml-3">
-            <EditIcon />
+            <EditIcon BookmarkId="@Model.Id" />
             <NavigateIcon Url="@Model.Url" />
             <DeleteIcon BookmarkId="@Model.Id" DeleteCallback="Delete" />
         </div>

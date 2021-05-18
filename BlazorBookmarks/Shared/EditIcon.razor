@@ -9,9 +9,15 @@
 </svg>
 
 @code {
+    [CascadingParameter]
+    public FolderContainer Container { get; set; }
+    
+    [Parameter]
+    public int BookmarkId { get; set; }
 
     private void HandleEdit()
     {
+        Container.EditBookmark(BookmarkId);
     }
 
 }

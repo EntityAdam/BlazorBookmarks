@@ -1,0 +1,21 @@
+﻿<!--
+<div class="flex flex-col">
+    <div class="mt-2 bg-blue-100">
+        + Add another folder
+    </div>
+</div>
+-->
+
+@code {
+
+    [CascadingParameter]
+    public FolderContainer Container { get; set; }
+
+    private string FolderName { get; set; }
+
+    private void AddFolder()
+    {
+        Container.AddFolder(FolderName);
+    }
+
+}

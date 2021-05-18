@@ -2,11 +2,11 @@
 @page "/"
 
 <h1 class="text-4xl">Bookmarks</h1>
-    <FolderContainer CurrentState="State"
-                     SnapShotCallback="SnapShot"
-                     UndoCallback="BookmarkUndo"
-                     RedoCallback="BookmarkRedo"
-                     DeleteBookmarkCallback="BookmarkDelete" />
+<FolderContainer CurrentState="State"
+                 SnapShotCallback="SnapShot"
+                 UndoCallback="BookmarkUndo"
+                 RedoCallback="BookmarkRedo"
+                 DeleteBookmarkCallback="BookmarkDelete"/>
 <div>
     <h2>Features:</h2>
     <ul>
@@ -32,7 +32,7 @@
         <li>[X] Clicking the launch icon on a bookmark launches it twice</li>
     </ul>
 </div>
-<EditBookmarkModal />
+<EditBookmarkModal/>
 
 
 @code {
@@ -68,15 +68,16 @@
 
     private static StateModel MapToState(StateModelUi stateModelUi)
     {
-        var folders = stateModelUi.Folders.Select(x => new FolderModel() { Id = x.Id, Name = x.Name, LastUpdated = x.LastUpdated }).ToList();
-        var bookmarks = stateModelUi.Bookmarks.Select(x => new BookmarkModel() { Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url }).ToList();
+        var folders = stateModelUi.Folders.Select(x => new FolderModel() {Id = x.Id, Name = x.Name, LastUpdated = x.LastUpdated}).ToList();
+        var bookmarks = stateModelUi.Bookmarks.Select(x => new BookmarkModel() {Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url}).ToList();
         return new StateModel(folders, bookmarks);
     }
 
     private static StateModelUi MapToStateUi(StateModel stateModel)
     {
-        var folders = stateModel.Folders.Select(x => new FolderModelUi() { Id = x.Id, Name = x.Name, LastUpdated = x.LastUpdated }).ToList();
-        var bookmarks = stateModel.Bookmarks.Select(x => new BookmarkModelUi() { Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url }).ToList();
+        var folders = stateModel.Folders.Select(x => new FolderModelUi() {Id = x.Id, Name = x.Name, LastUpdated = x.LastUpdated}).ToList();
+        var bookmarks = stateModel.Bookmarks.Select(x => new BookmarkModelUi() {Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url}).ToList();
         return new StateModelUi(folders, bookmarks);
     }
+
 }

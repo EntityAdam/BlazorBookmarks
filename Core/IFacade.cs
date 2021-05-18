@@ -4,6 +4,7 @@ namespace Core
 {
     public interface IFacade
     {
+        void AddFolder(string folderName);
         void DeleteFolder(int folderId);
         void DeleteBookmark(int bookmarkId);
        
