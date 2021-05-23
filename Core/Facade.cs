@@ -26,6 +26,7 @@ namespace Core
         {
             var index = GetState().Folders.Max(x => x.Id) +1 ;
             GetState().Folders.Add(new FolderModel() { Id = index, Name = folderName, LastUpdated = DateTime.Now });
+            Snapshot(GetState());
         }
 
         public void DeleteFolder(int folderId)

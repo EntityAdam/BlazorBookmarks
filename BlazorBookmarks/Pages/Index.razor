@@ -6,6 +6,7 @@
                  SnapShotCallback="SnapShot"
                  UndoCallback="BookmarkUndo"
                  RedoCallback="BookmarkRedo"
+                 AddFolderCallback="AddFolder"
                  DeleteBookmarkCallback="BookmarkDelete"/>
 <div>
     <h2>Features:</h2>
@@ -67,6 +68,11 @@
     private void BookmarkDelete(int id)
     {
         facade.DeleteBookmark(id);
+    }
+
+    private void AddFolder()
+    {
+        StateHasChanged();
     }
 
     private static StateModel MapToState(StateModelUi stateModelUi)

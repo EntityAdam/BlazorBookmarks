@@ -9,16 +9,16 @@
 }
 else
 {
+    <!-- removed @onkeypress:preventDefault, this blocked child <input/> elements -->
     <div class="flex flex-wrap items-baseline bg-black"
          tabindex="1"
-         @onkeypress="((e) => HandleKeyPress(e))"
-         @onkeypress:preventDefault>
+         @onkeypress="((e) => HandleKeyPress(e))">
         <CascadingValue Value="@this">
             @foreach (var folder in CurrentState.Folders)
             {
                 <Folder Model="@folder"/>
             }
-            <Addfolder />
+            <Addfolder/>
         </CascadingValue>
     </div>
 }
@@ -43,6 +43,9 @@ else
     [Parameter]
     public EventCallback<int> DeleteBookmarkCallback { get; set; }
 
+    [Parameter]
+    public EventCallback AddFolderCallback { get; set; }
+
     public FolderModelUi FolderDragPayload { get; set; }
 
     public BookmarkModelUi BookmarkDragPayload { get; set; }
@@ -52,8 +55,9 @@ else
     public void AddFolder(string folderName)
     {
         facade.AddFolder(folderName);
+        AddFolderCallback.InvokeAsync().Wait();
     }
-    
+
     public void MoveFolderPosition(int dragTargetFolderId, FolderModelUi folderDragPayload)
     {
         var dragTargetIndex = CurrentState.Folders.FindIndex(x => x.Id == dragTargetFolderId);
