@@ -163,7 +163,7 @@ namespace UnitTests
             orig.Redo();
             orig.Redo();
 
-            orig.GetState().Folders[0].Name.Should().Be("Folder2");
+            orig.GetState().Folders[0].Name.Should().Be("Folder1");
         }
 
         [Fact]
