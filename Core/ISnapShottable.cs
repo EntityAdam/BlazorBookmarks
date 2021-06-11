@@ -1,9 +1,11 @@
-﻿namespace Core
+﻿using System.Threading.Tasks;
+
+namespace Core
 {
     public interface ISnapshottable<T> where T : IDeepCloneable<T>
     {
-        T Redo();
-        void Snapshot(T state);
-        T Undo();
+        Task<T> Redo();
+        Task Snapshot(T state);
+        Task<T> Undo();
     }
 }

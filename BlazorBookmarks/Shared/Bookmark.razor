@@ -33,6 +33,9 @@
 </li>
 
 @code {
+   
+    private string IsVisibleCssClass => Model.Hidden ? "invisible" : "visible";
+    
     [CascadingParameter]
     public FolderContainer Container { get; set; }
 
@@ -56,11 +59,11 @@
     {
     }
 
-    private void HandleDragOver(BookmarkModelUi target)
+    private async Task HandleDragOver(BookmarkModelUi target)
     {
         if (Container.BookmarkDragPayload == null)
             return;
-        Container.MoveBookmarkPosition(target);
+        await Container.MoveBookmarkPosition(target);
     }
 
     private void HandleDrop()
@@ -77,10 +80,9 @@
         navigationManager.NavigateTo(Model.Url, true);
     }
 
-    private void Delete()
+    private async Task Delete()
     {
-        Container.RemoveBookmark(Model);
+        await Container.RemoveBookmark(Model);
     }
-    
-    private string IsVisibleCssClass => Model.Hidden ? "invisible" : "visible";
+
 }

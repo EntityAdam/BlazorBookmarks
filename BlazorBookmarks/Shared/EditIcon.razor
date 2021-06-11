@@ -15,9 +15,9 @@
     [Parameter]
     public int BookmarkId { get; set; }
 
-    private void HandleEdit()
+    private async Task HandleEdit()
     {
-        Container.EditBookmark(BookmarkId);
+        await Container.EditBookmark(BookmarkId);
     }
 
 }

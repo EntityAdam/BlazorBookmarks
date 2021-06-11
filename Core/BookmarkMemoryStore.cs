@@ -1,11 +1,17 @@
-﻿using Core.Models;
+﻿using System.Threading.Tasks;
+using Core.Models;
 
 namespace Core
 {
     public class BookmarkMemoryStore : IBookmarkStore
     {
-        private StateModel State = new();
-        public StateModel Get() => State;
-        public void Save(StateModel state) => State = state;
+        private StateModel _state = new();
+        
+        public Task<StateModel> Get() => Task.FromResult(this._state);
+        public Task Save(StateModel state)
+        {
+            this._state = state;
+            return Task.FromResult(this._state);
+        }
     }
 }

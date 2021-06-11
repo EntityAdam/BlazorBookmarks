@@ -40,25 +40,22 @@ else
     [Parameter]
     public EventCallback RedoCallback { get; set; }
 
-    [Parameter]
-    public EventCallback<int> DeleteBookmarkCallback { get; set; }
-
-    [Parameter]
-    public EventCallback AddFolderCallback { get; set; }
-
     public FolderModelUi FolderDragPayload { get; set; }
 
     public BookmarkModelUi BookmarkDragPayload { get; set; }
 
     private bool IsEditMode { get; set; } = false;
 
-    public void AddFolder(string folderName)
+    public async Task AddFolder(string folderName)
     {
-        facade.AddFolder(folderName);
-        AddFolderCallback.InvokeAsync().Wait();
+        var folder = await facade.AddFolder(folderName);
+        var folderModelUi = new FolderModelUi() {Id = folder.Id, LastUpdated = folder.LastUpdated, Name = folder.Name, Hidden = false};
+        CurrentState.Folders.Add(folderModelUi);
+        await SnapShotCallback.InvokeAsync();
+        await InvokeAsync(StateHasChanged);
     }
 
-    public void MoveFolderPosition(int dragTargetFolderId, FolderModelUi folderDragPayload)
+    public async Task MoveFolderPosition(int dragTargetFolderId, FolderModelUi folderDragPayload)
     {
         var dragTargetIndex = CurrentState.Folders.FindIndex(x => x.Id == dragTargetFolderId);
         if (dragTargetIndex >= 0)
@@ -66,10 +63,10 @@ else
             CurrentState.Folders.RemoveAll(x => x.Id == FolderDragPayload.Id);
             CurrentState.Folders.Insert(dragTargetIndex, folderDragPayload);
         }
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 
-    public void MoveBookmarkPosition(BookmarkModelUi dragTargetBookmark)
+    public async Task MoveBookmarkPosition(BookmarkModelUi dragTargetBookmark)
     {
         BookmarkDragPayload.FolderId = dragTargetBookmark.FolderId;
         var index = CurrentState.Bookmarks.FindIndex(x => x == dragTargetBookmark);
@@ -78,20 +75,20 @@ else
             CurrentState.Bookmarks.RemoveAll(x => x == BookmarkDragPayload);
             CurrentState.Bookmarks.Insert(index, BookmarkDragPayload);
         }
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 
-    public void MoveBookmarkToFolder(FolderModelUi target)
+    public async Task MoveBookmarkToFolder(FolderModelUi target)
     {
         BookmarkDragPayload.FolderId = target.Id;
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 
-    public void RemoveBookmark(BookmarkModelUi linkToDelete)
+    public async Task RemoveBookmark(BookmarkModelUi linkToDelete)
     {
         CurrentState.Bookmarks.RemoveAll(x => x == linkToDelete);
-        SnapShotCallback.InvokeAsync().Wait();
-        StateHasChanged();
+        await SnapShotCallback.InvokeAsync();
+        await InvokeAsync(StateHasChanged);
     }
 
     public void Navigate(BookmarkModelUi linkToNavigate)
@@ -115,16 +112,15 @@ else
         }
     }
 
-    public void EditBookmark(int bookmarkId)
+    public async Task EditBookmark(int bookmarkId)
     {
         IsEditMode = true;
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 
-    public void CancelEdit()
+    public async Task CancelEdit()
     {
         IsEditMode = false;
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
-
 }

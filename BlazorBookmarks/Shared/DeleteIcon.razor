@@ -16,8 +16,8 @@
     [Parameter]
     public EventCallback<int> DeleteCallback { get; set; }
 
-    private void HandleDelete()
+    private async Task HandleDelete()
     {
-        DeleteCallback.InvokeAsync(BookmarkId);
+        await DeleteCallback.InvokeAsync(BookmarkId);
     }
 }

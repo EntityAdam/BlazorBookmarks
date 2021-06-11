@@ -2,12 +2,18 @@
 @page "/"
 
 <h1 class="text-4xl">Bookmarks</h1>
-<FolderContainer CurrentState="State"
-                 SnapShotCallback="SnapShot"
-                 UndoCallback="BookmarkUndo"
-                 RedoCallback="BookmarkRedo"
-                 AddFolderCallback="AddFolder"
-                 DeleteBookmarkCallback="BookmarkDelete"/>
+@if (State == null)
+{
+    <h1>Loading...</h1>
+}
+else
+{
+    <FolderContainer CurrentState="State"
+                     SnapShotCallback="SnapShot"
+                     UndoCallback="BookmarkUndo"
+                     RedoCallback="BookmarkRedo"/>    
+}
+
 <div>
     <h2>Features:</h2>
     <ul>
@@ -42,37 +48,28 @@
 @code {
     private StateModelUi State { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        State = MapToStateUi(facade.GetStateFromStore());
-        StateHasChanged();
+        var state = await facade.GetStateFromStore();
+        this.State = MapToStateUi(state);
+        await InvokeAsync(StateHasChanged);
+    }
+    
+    private async Task SnapShot()
+    {
+        await facade.Snapshot(MapToState(State));
     }
 
-    private void SnapShot()
+    private async Task BookmarkUndo()
     {
-        facade.Snapshot(MapToState(State));
+        State = MapToStateUi(await facade.Undo());
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void BookmarkUndo()
+    private async Task BookmarkRedo()
     {
-        State = MapToStateUi(facade.Undo());
-        StateHasChanged();
-    }
-
-    private void BookmarkRedo()
-    {
-        State = MapToStateUi(facade.Redo());
-        StateHasChanged();
-    }
-
-    private void BookmarkDelete(int id)
-    {
-        facade.DeleteBookmark(id);
-    }
-
-    private void AddFolder()
-    {
-        StateHasChanged();
+        State = MapToStateUi(await facade.Redo());
+        await InvokeAsync(StateHasChanged);
     }
 
     private static StateModel MapToState(StateModelUi stateModelUi)
@@ -88,5 +85,4 @@
         var bookmarks = stateModel.Bookmarks.Select(x => new BookmarkModelUi() {Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url}).ToList();
         return new StateModelUi(folders, bookmarks);
     }
-
 }

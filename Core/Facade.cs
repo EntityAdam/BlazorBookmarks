@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Core.Models;
 
 namespace Core
@@ -16,50 +17,66 @@ namespace Core
             this.bookmarkStore = bookmarkStore;
         }
 
-        public void DeleteBookmark(int bookmarkId)
+        public async Task DeleteBookmark(int bookmarkId)
         {
-            GetState().Bookmarks.RemoveAll(x => x.Id == bookmarkId);
-            Snapshot(GetState());
+            //remove from ui state
+            var state = await GetState();
+            state.Bookmarks.RemoveAll(x => x.Id == bookmarkId);
+            //snap
+            await Snapshot(await GetState());
         }
 
-        public void AddFolder(string folderName)
+        public async Task<FolderModel> AddFolder(string folderName)
         {
-            var index = GetState().Folders.Max(x => x.Id) +1 ;
-            GetState().Folders.Add(new FolderModel() { Id = index, Name = folderName, LastUpdated = DateTime.Now });
-            Snapshot(GetState());
+            var state = await GetState();
+            var index = state.Folders.Max(x => x.Id) + 1;
+            var folder = new FolderModel() {Id = index, Name = folderName, LastUpdated = DateTime.Now};
+
+            //add to ui state
+            state = await GetState();
+            state.Folders.Add(folder);
+            //snap
+            await Snapshot(await GetState());
+            return folder;
         }
 
-        public void DeleteFolder(int folderId)
+        public async Task DeleteFolder(int folderId)
         {
-            GetState().Folders.RemoveAll(x => x.Id == folderId);
-            GetState().Bookmarks.RemoveAll(x => x.FolderId == folderId);
-            Snapshot(GetState());
+            var state = await GetState();
+            state.Folders.RemoveAll(x => x.Id == folderId);
+            state.Bookmarks.RemoveAll(x => x.FolderId == folderId);
+            await Snapshot(await GetState());
         }
 
-        public StateModel GetState() => stateManager.CurrentState;
-        public StateModel GetStateFromStore()
+        public async Task<StateModel> GetState() => await stateManager.GetState();
+
+        public async Task<StateModel> GetStateFromStore()
         {
-            var state = bookmarkStore.Get();
-            stateManager.LoadState(state);
-            stateManager.Snapshot(state);
+            var state = await bookmarkStore.Get();
+            await stateManager.LoadState(state);
+            await stateManager.Snapshot(state);
             return state;
         }
-        public StateModel Redo()
+
+        public async Task<StateModel> Redo()
         {
-            var state = stateManager.Redo();
-            SaveStateToStore(state);
+            var state = await stateManager.Redo();
+            await SaveStateToStore(state);
             return state;
         }
-        public void SaveStateToStore(StateModel state) => bookmarkStore.Save(state);
-        public void Snapshot(StateModel state)
+
+        public async Task SaveStateToStore(StateModel state) => await bookmarkStore.Save(state);
+
+        public async Task Snapshot(StateModel state)
         {
-            stateManager.Snapshot(state);
-            SaveStateToStore(state);
+            await stateManager.Snapshot(state);
+            await SaveStateToStore(state);
         }
-        public StateModel Undo()
+
+        public async Task<StateModel> Undo()
         {
-            var state = stateManager.Undo();
-            SaveStateToStore(state);
+            var state = await stateManager.Undo();
+            await SaveStateToStore(state);
             return state;
         }
     }

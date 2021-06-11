@@ -51,33 +51,33 @@
     {
     }
 
-    private void HandleDragOver(FolderModelUi collection)
+    private async Task HandleDragOver(FolderModelUi collection)
     {
         if (Container.FolderDragPayload != null)
         {
-            Container.MoveFolderPosition(collection.Id, Container.FolderDragPayload);
+            await Container.MoveFolderPosition(collection.Id, Container.FolderDragPayload);
         }
 
         if (Container.BookmarkDragPayload != null)
         {
-            Container.MoveBookmarkToFolder(collection);
+            await Container.MoveBookmarkToFolder(collection);
         }
     }
 
-    private void HandleDrop(FolderModelUi dropTarget)
+    private async Task HandleDrop(FolderModelUi dropTarget)
     {
         if (Container.FolderDragPayload != null)
         {
             Container.FolderDragPayload.Hidden = false;
             Container.FolderDragPayload = null;
-            Container.SnapShotCallback.InvokeAsync();
+            await Container.SnapShotCallback.InvokeAsync();
         }
 
         if (Container.BookmarkDragPayload != null)
         {
             Container.BookmarkDragPayload.Hidden = false;
             Container.BookmarkDragPayload = null;
-            Container.SnapShotCallback.InvokeAsync();
+            await Container.SnapShotCallback.InvokeAsync();
         }
     }
 

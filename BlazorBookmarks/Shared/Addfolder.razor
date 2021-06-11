@@ -26,28 +26,29 @@ else
 
     private string FolderName { get; set; }
 
-    private void ShowEditor()
+    private async Task ShowEditor()
     {
         IsShowEditor = true;
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void CancelEdit()
+    private async Task CancelEdit()
     {
         IsShowEditor = false;
         FolderName = null;
-        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void AddFolder()
+    private async Task AddFolder()
     {
-        if (FolderName == string.Empty)
+        if (string.IsNullOrEmpty(FolderName))
         {
-            CancelEdit();
+            await CancelEdit();
         }
         else
         {
-            Container.AddFolder(FolderName);
+            await Container.AddFolder(FolderName);
+            await CancelEdit();
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using Core.Models;
+﻿using System.Threading.Tasks;
+using Core.Models;
 
 namespace Core
 {
     public interface IBookmarkStore
     {
-        public void Save(StateModel state);
-        public StateModel Get();
+        public Task Save(StateModel state);
+        public Task<StateModel> Get();
     }
 }

@@ -45,8 +45,8 @@
     [CascadingParameter]
     public FolderContainer Container { get; set; }
 
-    public void HandleCancel()
+    private async Task HandleCancel()
     {
-        Container.CancelEdit();
+        await Container.CancelEdit();
     }
 }
