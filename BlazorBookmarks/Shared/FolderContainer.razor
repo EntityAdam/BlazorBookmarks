@@ -1,10 +1,10 @@
 ﻿@inject NavigationManager navigationManager
 @inject IFacade facade
 
-@if (IsEditMode)
+@if (IsEditMode && BookmarkToEdit != null)
 {
     <CascadingValue Value="@this">
-        <EditBookmark/>
+        <EditBookmark BookmarkToEdit="BookmarkToEdit"/>
     </CascadingValue>
 }
 else
@@ -45,6 +45,7 @@ else
     public BookmarkModelUi BookmarkDragPayload { get; set; }
 
     private bool IsEditMode { get; set; } = false;
+    private BookmarkModelUi BookmarkToEdit { get; set; }
 
     public async Task AddFolder(string folderName)
     {
@@ -115,12 +116,34 @@ else
     public async Task EditBookmark(int bookmarkId)
     {
         IsEditMode = true;
+        BookmarkToEdit = CurrentState.Bookmarks.Single(x => x.Id == bookmarkId);
         await InvokeAsync(StateHasChanged);
     }
 
-    public async Task CancelEdit()
+    public async Task CancelEditBookmark()
     {
         IsEditMode = false;
+        BookmarkToEdit = null;
         await InvokeAsync(StateHasChanged);
     }
+
+    public async Task SaveEditBookmark(int id, string bookmarkName, string bookmarkUrl)
+    {
+    //todo validation
+        BookmarkToEdit.Name = bookmarkName;
+        BookmarkToEdit.Url = bookmarkUrl;
+    //todo persist
+        await facade.EditBookmark(id, bookmarkName, bookmarkUrl);
+        await CancelEditBookmark();
+    }
+
+    public async Task DeleteFolder(int folderId)
+    {
+        CurrentState.Folders.RemoveAll(x => x.Id == folderId);
+        CurrentState.Bookmarks.RemoveAll(x => x.FolderId == folderId);
+
+        await facade.DeleteFolder(folderId);
+        await InvokeAsync(StateHasChanged);
+    }
+
 }

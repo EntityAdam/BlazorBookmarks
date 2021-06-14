@@ -8,9 +8,11 @@
      @ondragover="((e) => HandleDragOver(Model))"
      @ondrop="((e) => HandleDrop(Model))">
 
-    <div class="@IsVisibleCssClass" style="pointer-events:none;">
-        <div>
-            <h3 @onclick:stopPropagation @onclick="HandleEditFolderTitle" class="border-b-2" style="border-color: black;">@Model.Name</h3>
+    <!--<div class="@IsVisibleCssClass" style="pointer-events:none;">-->
+    <div class="@IsVisibleCssClass">
+        <div class="flex justify-between">
+            <FolderTitle FolderName="@Model.Name"/>
+            <DeleteIcon Id="@Model.Id" DeleteCallback="Delete" />
         </div>
         <ul class="px-2 py-5" style="pointer-events:auto">
             @foreach (var b in Container.CurrentState.Bookmarks.Where(x => x.FolderId == Model.Id))
@@ -32,9 +34,14 @@
 
     private string IsVisibleCssClass => Model.Hidden ? "invisible" : "visible";
 
+    private async Task Delete()
+    {
+        await Container.DeleteFolder(Model.Id);
+    }
+    
     private void HandleEditFolderTitle()
     {
-        //show edit screen
+        Console.WriteLine("Edit Folder Title");
     }
 
     private void HandleDragStart(FolderModelUi selectedCollection)

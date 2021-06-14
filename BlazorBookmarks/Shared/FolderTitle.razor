@@ -1,0 +1,35 @@
+﻿@if (IsEditMode)
+{
+    <input @bind-value="FolderName" type="text" placeholder="@FolderName" />
+    <div class="flex">
+        <button @onclick="Save" class="px-2 py-2 border-2 rounded bg-blue-400 hover:bg-blue-500">Save</button>
+        <button @onclick="Cancel" class="px-2 py-2 border-2 rounded bg-gray-400 hover:bg-gray-500">X</button>
+    </div>
+}
+else
+{
+    <h3 @onclick="HandleEditFolderTitle" class="border-b-2" style="border-color: black;">@FolderName</h3>
+}
+
+@code {
+
+    [Parameter]
+    public string FolderName { get; set; }
+    
+    private bool IsEditMode { get; set; } = false;
+
+    private async Task HandleEditFolderTitle()
+    {
+        
+    }
+
+    private async Task Save()
+    {
+        
+    }
+
+    private async Task Cancel()
+    {
+        
+    }
+}

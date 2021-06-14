@@ -11,13 +11,13 @@
 @code {
 
     [Parameter]
-    public int BookmarkId { get; set; }
+    public int Id { get; set; }
     
     [Parameter]
     public EventCallback<int> DeleteCallback { get; set; }
 
     private async Task HandleDelete()
     {
-        await DeleteCallback.InvokeAsync(BookmarkId);
+        await DeleteCallback.InvokeAsync(Id);
     }
 }

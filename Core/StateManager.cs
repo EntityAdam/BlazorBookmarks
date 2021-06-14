@@ -22,29 +22,25 @@ namespace Core
 
         public async Task Snapshot(T state)
         {
-            UndoStack.Push(CurrentState);
+            if (CurrentState != null) UndoStack.Push(CurrentState);
             CurrentState = state.DeepCopy();
         }
 
         public async Task<T> Redo()
         {
-            if (RedoStack.Count > 0)
-            {
-                UndoStack.Push(CurrentState);
-                CurrentState = RedoStack.Pop();
-            }
-
+            if (RedoStack.Count == 0) return CurrentState;
+            
+            UndoStack.Push(CurrentState);
+            CurrentState = RedoStack.Pop();
             return CurrentState;
         }
 
         public async Task<T> Undo()
         {
-            if (UndoStack.Count > 0)
-            {
-                RedoStack.Push(CurrentState);
-                CurrentState = UndoStack.Pop();
-            }
-
+            if (UndoStack.Count == 0) return CurrentState;
+            
+            RedoStack.Push(CurrentState);
+            CurrentState = UndoStack.Pop();
             return CurrentState;
         }
     }

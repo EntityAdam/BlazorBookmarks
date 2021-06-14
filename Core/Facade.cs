@@ -26,6 +26,16 @@ namespace Core
             await Snapshot(await GetState());
         }
 
+        public async Task EditBookmark(int bookmarkId, string name, string url)
+        {
+            var state = await GetState();
+            var bookmarkToEdit = state.Bookmarks.Single(x => x.Id == bookmarkId);
+            //todo mutation, want immutable
+            bookmarkToEdit.Name = name;
+            bookmarkToEdit.Url = url;
+            await Snapshot(state);
+        }
+
         public async Task<FolderModel> AddFolder(string folderName)
         {
             var state = await GetState();

@@ -7,11 +7,7 @@ namespace Core
     {
         private StateModel _state = new();
         
-        public Task<StateModel> Get() => Task.FromResult(this._state);
-        public Task Save(StateModel state)
-        {
-            this._state = state;
-            return Task.FromResult(this._state);
-        }
+        public async Task<StateModel> Get() => _state;
+        public async Task Save(StateModel state) => this._state = state;
     }
 }

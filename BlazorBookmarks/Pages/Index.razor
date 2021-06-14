@@ -10,8 +10,8 @@ else
 {
     <FolderContainer CurrentState="State"
                      SnapShotCallback="SnapShot"
-                     UndoCallback="BookmarkUndo"
-                     RedoCallback="BookmarkRedo"/>    
+                     UndoCallback="Undo"
+                     RedoCallback="Redo"/>    
 }
 
 <div>
@@ -22,10 +22,11 @@ else
         <li>[X] Undo and Redo</li>
         <li>[X] Save between sessions</li>
         <li>[X] Delete Bookmarks</li>
-        <li>[ ] Create new folders</li>
+        <li>[X] Create new folders</li>
         <li>[ ] Show empy folders flag</li>
-        <li>[ ] Delete folders</li>
-        <li>[ ] Edit bookmark modal</li>
+        <li>[X] Delete folders</li>
+        <li>[X] Edit bookmarks</li>
+        <li>[ ] Sort by most used</li>
         <li>[ ] Remove old bookmarks (added N months ago)</li>
         <li>[ ] Track created date</li>
         <li>[ ] Remove bookmarks never used (never clicked on)</li>
@@ -34,11 +35,11 @@ else
         <li>[ ] Drop URLs from the bookmarks bar</li>
         <li>[ ] Import bookmarks from broswer export</li>
         <li>[ ] Export bookmarks to broswer export</li>
-
     </ul>
-    <h2>Bugs to fix:</h2>
+    <h2>Issues:</h2>
     <ul>
         <li>[ ] Moving folders doesn't hide the target folder bookmarks</li>
+        <li>[ ] Undo when editing a bookmark not working</li>
         <li>[X] Clicking the launch icon on a bookmark launches it twice</li>
     </ul>
 </div>
@@ -51,7 +52,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         var state = await facade.GetStateFromStore();
-        this.State = MapToStateUi(state);
+        State = MapToStateUi(state);
         await InvokeAsync(StateHasChanged);
     }
     
@@ -60,13 +61,13 @@ else
         await facade.Snapshot(MapToState(State));
     }
 
-    private async Task BookmarkUndo()
+    private async Task Undo()
     {
         State = MapToStateUi(await facade.Undo());
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task BookmarkRedo()
+    private async Task Redo()
     {
         State = MapToStateUi(await facade.Redo());
         await InvokeAsync(StateHasChanged);
