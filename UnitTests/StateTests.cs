@@ -276,9 +276,9 @@ namespace UnitTests
             var bookmarks = new List<BookmarkModel>() {bookmark1, bookmark2};
             var state = new StateModel(folders, bookmarks);
             await orig.Snapshot(state);
-            await orig.AddFolder("Folder3");
-            state = await orig.GetState();
-            state.Folders.Count().Should().Be(3);
+            await orig.AddFolder("Folder2");
+            var state1 = await orig.GetState();
+            state1.Folders.Count().Should().Be(2);
         }
     }
 }
