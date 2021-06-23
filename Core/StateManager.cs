@@ -12,22 +12,24 @@ namespace Core
 
         private T CurrentState { get; set; }
         
-        public async Task<T> GetState() => CurrentState;
+        public Task<T> GetState() => Task.FromResult(CurrentState);
 
-        public async Task LoadState(T state)
+        public Task LoadState(T state)
         {
             CurrentState = state.DeepCopy();
+            return Task.CompletedTask;
         }
 
-        public async Task Snapshot(T state)
+        public Task Snapshot(T state)
         {
             if (CurrentState != null) UndoStack.Push(CurrentState);
             CurrentState = state.DeepCopy();
+            return Task.CompletedTask;
         }
 
-        public async Task<T> Redo()
+        public Task<T> Redo()
         {
-            if (RedoStack.Count == 0) return CurrentState;
+            if (RedoStack.IsEmpty) return Task.FromResult(CurrentState);
             
             UndoStack.Push(CurrentState);
 
@@ -36,21 +38,21 @@ namespace Core
             if (result != null)
                 CurrentState = result;
             
-            return CurrentState;
+            return Task.FromResult(CurrentState);
         }
 
-        public async Task<T> Undo()
+        public Task<T> Undo()
         {
-            if (UndoStack.Count == 0) return CurrentState;
+            if (UndoStack.IsEmpty) return Task.FromResult(CurrentState);
             
             RedoStack.Push(CurrentState);
 
-            RedoStack.TryPop(out var result);
+            UndoStack.TryPop(out var result);
 
             if (result != null)
                 CurrentState = result;
             
-            return CurrentState;
+            return Task.FromResult(CurrentState);
         }
     }
 }
