@@ -93,17 +93,16 @@ else
         await InvokeAsync(StateHasChanged);
     }
 
-    public async Task MoveBookmarkToFolder(FolderModelUi target)
+    public Task MoveBookmarkToFolder(FolderModelUi target)
     {
         BookmarkDragPayload.FolderId = target.Id;
-        await InvokeAsync(StateHasChanged);
+        return Task.CompletedTask;
     }
 
     public async Task RemoveBookmark(BookmarkModelUi linkToDelete)
     {
         CurrentState.Bookmarks.RemoveAll(x => x == linkToDelete);
         await SnapShotCallback.InvokeAsync();
-        await InvokeAsync(StateHasChanged);
     }
 
     public void Navigate(BookmarkModelUi linkToNavigate)
@@ -155,9 +154,7 @@ else
     {
         CurrentState.Folders.RemoveAll(x => x.Id == folderId);
         CurrentState.Bookmarks.RemoveAll(x => x.FolderId == folderId);
-
-        await facade.DeleteFolder(folderId);
-        await InvokeAsync(StateHasChanged);
+        await SnapShotCallback.InvokeAsync();
     }
 
 }

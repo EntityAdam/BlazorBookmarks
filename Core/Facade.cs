@@ -36,14 +36,6 @@ namespace Core
             await Snapshot(state);
         }
 
-        public async Task DeleteFolder(int folderId)
-        {
-            var state = await GetState();
-            state.Folders.RemoveAll(x => x.Id == folderId);
-            state.Bookmarks.RemoveAll(x => x.FolderId == folderId);
-            await Snapshot(await GetState());
-        }
-
         public async Task<StateModel> GetState() => await stateManager.GetState();
 
         public async Task<StateModel> GetStateFromStore()

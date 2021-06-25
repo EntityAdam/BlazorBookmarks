@@ -199,23 +199,7 @@ namespace UnitTests
             var x = folders;
         }
 
-        [Fact]
-        public async Task Should_DeleteFolder_AndUndo()
-        {
-            var orig = new Facade(new StateManager<StateModel>(), new BookmarkMemoryStore());
-            var folder1 = new FolderModel { Id = 1, Name = "Folder1" };
-            var folder2 = new FolderModel { Id = 2, Name = "Folder2" };
-            var folders = new List<FolderModel>() { folder1, folder2 };
-            var state1 = new StateModel(folders, new List<BookmarkModel>());
-            await orig.Snapshot(state1);
-
-            await orig.DeleteFolder(2);
-
-            var state = await orig.GetState();
-
-            state.Folders.Count.Should().Be(1);
-            state.Folders[0].Name.Should().Be("Folder1");
-        }
+       
 
         [Fact]
         public async Task Should_DeleteBookmark()
@@ -233,21 +217,7 @@ namespace UnitTests
             state.Bookmarks.Count.Should().Be(1);
         }
 
-        [Fact]
-        public async Task Should_DeleteFolder_And_DeleteChildBookmarks()
-        {
-            var orig = new Facade(new StateManager<StateModel>(), new BookmarkMemoryStore());
-            var folder1 = new FolderModel { Id = 1, Name = "Folder1" };
-            var folders = new List<FolderModel>() { folder1 };
-            var bookmark1 = new BookmarkModel() { Id = 1, FolderId = 1, Name = "Bookmark1" };
-            var bookmark2 = new BookmarkModel() { Id = 2, FolderId = 1, Name = "Bookmark2" };
-            var bookmarks = new List<BookmarkModel>() { bookmark1, bookmark2 };
-            var state = new StateModel(folders, bookmarks);
-            await orig.Snapshot(state);
-            await orig.DeleteFolder(1);
-            state = await orig.GetState();
-            state.Bookmarks.Count.Should().Be(0);
-        }
+
 
         [Fact]
         public async Task Should_EditBookmark_AndUndo()
