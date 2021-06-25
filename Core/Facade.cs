@@ -17,13 +17,29 @@ namespace Core
             this.bookmarkStore = bookmarkStore;
         }
 
+
+        public async Task EditFolderTitle(int folderId, string folderName)
+        {
+            var state = await GetState();
+            var folder = state.Folders.Single(x=>x.Id == folderId);
+            folder.Name = folderName;
+            await Snapshot(state);
+        }
+
+        public async Task IncrementClicks(int bookmarkId)
+        {
+            var state = await GetState();
+            var bookmark = state.Bookmarks.Single(x=>x.Id == bookmarkId);
+            bookmark.Clicks++;
+            await Snapshot(state); //this should be save not a snapshot
+        }
         public async Task DeleteBookmark(int bookmarkId)
         {
             //remove from ui state
             var state = await GetState();
             state.Bookmarks.RemoveAll(x => x.Id == bookmarkId);
             //snap
-            await Snapshot(await GetState());
+            await Snapshot(state);
         }
 
         public async Task EditBookmark(int bookmarkId, string name, string url)

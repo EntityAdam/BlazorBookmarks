@@ -25,6 +25,8 @@ else
         <li>[X] Create new folders</li>
         <li>[X] Delete folders</li>
         <li>[X] Edit bookmarks</li>
+        <li>[X] Edit Folder Title</li>
+        <li>[ ] Implement Save without Snapshot for Increment Clicks</li>
         <li>[ ] Sort by most used</li>
         <li>[ ] Remove old bookmarks (added N months ago)</li>
         <li>[ ] Track created date</li>
@@ -39,7 +41,6 @@ else
     </ul>
     <h2>Issues:</h2>
     <ul>
-        <li>[ ] CTRL+Z broke</li>
         <li>[ ] Moving folders doesn't hide the target folder bookmarks</li>
         <li>[ ] Undo when editing a bookmark not working</li>
         <li>[X] Clicking the launch icon on a bookmark launches it twice</li>
@@ -57,8 +58,14 @@ else
         State = MapToStateUi(state);
         await InvokeAsync(StateHasChanged);
     }
-    
+
     private async Task SnapShot()
+    {
+        await facade.Snapshot(MapToState(State));
+    }
+
+    //TODO implement save without snapshot to avoid being able to undo things like incrementing clicks
+    private async Task SaveWithoutSnapShot()
     {
         await facade.Snapshot(MapToState(State));
     }
@@ -78,14 +85,14 @@ else
     private static StateModel MapToState(StateModelUi stateModelUi)
     {
         var folders = stateModelUi.Folders.Select(x => new FolderModel() {Id = x.Id, Name = x.Name, LastUpdated = x.LastUpdated}).ToList();
-        var bookmarks = stateModelUi.Bookmarks.Select(x => new BookmarkModel() {Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url}).ToList();
+        var bookmarks = stateModelUi.Bookmarks.Select(x => new BookmarkModel() {Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url, Clicks = x.Clicks}).ToList();
         return new StateModel(folders, bookmarks);
     }
 
     private static StateModelUi MapToStateUi(StateModel stateModel)
     {
         var folders = stateModel.Folders.Select(x => new FolderModelUi() {Id = x.Id, Name = x.Name, LastUpdated = x.LastUpdated}).ToList();
-        var bookmarks = stateModel.Bookmarks.Select(x => new BookmarkModelUi() {Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url}).ToList();
+        var bookmarks = stateModel.Bookmarks.Select(x => new BookmarkModelUi() {Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url, Clicks = x.Clicks}).ToList();
         return new StateModelUi(folders, bookmarks);
     }
 }

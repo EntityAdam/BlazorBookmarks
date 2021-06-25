@@ -4,7 +4,7 @@
 @if (IsEditMode && BookmarkToEdit != null)
 {
     <CascadingValue Value="@this">
-        <EditBookmark BookmarkToEdit="BookmarkToEdit"/>
+        <EditBookmark BookmarkToEdit="BookmarkToEdit" />
     </CascadingValue>
 }
 else
@@ -16,9 +16,9 @@ else
         <CascadingValue Value="@this">
             @foreach (var folder in CurrentState.Folders)
             {
-                <Folder Model="@folder"/>
+                <Folder Model="@folder" />
             }
-            <Addfolder/>
+            <Addfolder />
         </CascadingValue>
     </div>
 }
@@ -47,10 +47,26 @@ else
     private bool IsEditMode { get; set; } = false;
     private BookmarkModelUi BookmarkToEdit { get; set; }
 
+    public async Task EditFolderTitle(int folderId, string folderName)
+    {
+        //this is the correct pattern!! fix everything else
+        var folder = CurrentState.Folders.Single(x=>x.Id == folderId);
+        folder.Name = folderName;
+        await SnapShotCallback.InvokeAsync();
+    }
+
+    public async Task IncrementClicks(int bookmarkId)
+    {
+        await facade.IncrementClicks(bookmarkId);
+        var bookmark = CurrentState.Bookmarks.Single(x => x.Id == bookmarkId);
+        bookmark.Clicks++;
+        await InvokeAsync(StateHasChanged);
+    }
+
     public async Task AddFolder(string folderName)
     {
         var folder = await facade.AddFolder(folderName);
-        var folderModelUi = new FolderModelUi() {Id = folder.Id, LastUpdated = folder.LastUpdated, Name = folder.Name, Hidden = false};
+        var folderModelUi = new FolderModelUi() { Id = folder.Id, LastUpdated = folder.LastUpdated, Name = folder.Name, Hidden = false };
         CurrentState.Folders.Add(folderModelUi);
         await SnapShotCallback.InvokeAsync();
         await InvokeAsync(StateHasChanged);
@@ -129,10 +145,10 @@ else
 
     public async Task SaveEditBookmark(int id, string bookmarkName, string bookmarkUrl)
     {
-    //todo validation
+        //todo validation
         BookmarkToEdit.Name = bookmarkName;
         BookmarkToEdit.Url = bookmarkUrl;
-    //todo persist
+        //todo persist
         await facade.EditBookmark(id, bookmarkName, bookmarkUrl);
         await CancelEditBookmark();
     }

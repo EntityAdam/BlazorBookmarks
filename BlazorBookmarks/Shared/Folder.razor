@@ -11,7 +11,7 @@
     <!--<div class="@IsVisibleCssClass" style="pointer-events:none;">-->
     <div class="@IsVisibleCssClass">
         <div class="flex justify-between">
-            <FolderTitle FolderName="@Model.Name"/>
+            <FolderTitle FolderId="@Model.Id" FolderName="@Model.Name"/>
             <DeleteIcon Id="@Model.Id" DeleteCallback="Delete" />
         </div>
         <ul class="px-2 py-5" style="pointer-events:auto">

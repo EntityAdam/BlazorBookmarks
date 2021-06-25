@@ -1,6 +1,6 @@
 ﻿@if (IsEditMode)
 {
-    <input @bind-value="FolderName" type="text" placeholder="@FolderName" />
+    <input @bind-value="NewFolderName" type="text" placeholder="@FolderName" />
     <div class="flex">
         <button @onclick="Save" class="px-2 py-2 border-2 rounded bg-blue-400 hover:bg-blue-500">Save</button>
         <button @onclick="Cancel" class="px-2 py-2 border-2 rounded bg-gray-400 hover:bg-gray-500">X</button>
@@ -12,24 +12,42 @@ else
 }
 
 @code {
+    [CascadingParameter]
+    public FolderContainer Container { get; set; }
+
+    [Parameter]
+    public int FolderId { get; set; }
 
     [Parameter]
     public string FolderName { get; set; }
-    
+
+    public string NewFolderName { get; set; }
+
     private bool IsEditMode { get; set; } = false;
 
-    private async Task HandleEditFolderTitle()
+    protected override Task OnInitializedAsync()
     {
-        
+        NewFolderName = FolderName;
+        return Task.CompletedTask;
+    }
+
+    private void HandleEditFolderTitle()
+    {
+        //TODO turn off draggable while in edit mode
+        IsEditMode = true;
     }
 
     private async Task Save()
     {
-        
+        await Container.EditFolderTitle(FolderId, NewFolderName);
+        await Container.SnapShotCallback.InvokeAsync();
+        IsEditMode = false;
     }
 
-    private async Task Cancel()
+    private void Cancel()
     {
-        
+        //TODO restore draggable
+        NewFolderName = FolderName;
+        IsEditMode = false;
     }
 }
