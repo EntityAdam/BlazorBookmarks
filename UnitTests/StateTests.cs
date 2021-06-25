@@ -266,21 +266,5 @@ namespace UnitTests
             state.Bookmarks.First().Name.Should().Be("Google");
             state.Bookmarks.First().Url.Should().Be("www.google.com");
         }
-
-        [Fact]
-        public async Task Should_AddFolder()
-        {
-            var orig = new Facade(new StateManager<StateModel>(), new BookmarkMemoryStore());
-            var folder1 = new FolderModel { Id = 1, Name = "Folder1" };
-            var folders = new List<FolderModel>() { folder1 };
-            var bookmark1 = new BookmarkModel() { Id = 1, FolderId = 1, Name = "Bookmark1" };
-            var bookmark2 = new BookmarkModel() { Id = 2, FolderId = 1, Name = "Bookmark2" };
-            var bookmarks = new List<BookmarkModel>() { bookmark1, bookmark2 };
-            var state = new StateModel(folders, bookmarks);
-            await orig.Snapshot(state);
-            await orig.AddFolder("Folder2");
-            var state1 = await orig.GetState();
-            state1.Folders.Count.Should().Be(2);
-        }
     }
 }

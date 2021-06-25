@@ -6,7 +6,6 @@ namespace Core
     public interface IFacade
     {
         Task EditBookmark(int bookmarkId, string name, string url);
-        Task<FolderModel> AddFolder(string folderName);
         Task DeleteFolder(int folderId);
         Task DeleteBookmark(int bookmarkId);
        

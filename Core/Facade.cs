@@ -36,20 +36,6 @@ namespace Core
             await Snapshot(state);
         }
 
-        public async Task<FolderModel> AddFolder(string folderName)
-        {
-            var state = await GetState();
-            var index = state.Folders.Max(x => x.Id) + 1;
-            var folder = new FolderModel() {Id = index, Name = folderName, LastUpdated = DateTime.Now};
-
-            //add to ui state
-            state = await GetState();
-            state.Folders.Add(folder);
-            //snap
-            await Snapshot(await GetState());
-            return folder;
-        }
-
         public async Task DeleteFolder(int folderId)
         {
             var state = await GetState();

@@ -64,11 +64,10 @@ else
 
     public async Task AddFolder(string folderName)
     {
-        var folder = await facade.AddFolder(folderName);
-        var folderModelUi = new FolderModelUi() { Id = folder.Id, LastUpdated = folder.LastUpdated, Name = folder.Name, Hidden = false };
+        var index = CurrentState.Folders.Max(x => x.Id) + 1;
+        var folderModelUi = new FolderModelUi() { Id = index, Name = folderName, LastUpdated = DateTime.Now, Hidden = false };
         CurrentState.Folders.Add(folderModelUi);
         await SnapShotCallback.InvokeAsync();
-        await InvokeAsync(StateHasChanged);
     }
 
     public async Task MoveFolderPosition(int dragTargetFolderId, FolderModelUi folderDragPayload)
