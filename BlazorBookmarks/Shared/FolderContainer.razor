@@ -130,23 +130,27 @@ else
     {
         IsEditMode = true;
         BookmarkToEdit = CurrentState.Bookmarks.Single(x => x.Id == bookmarkId);
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged); //todo this shouldn't be needed? check edit folder title
     }
 
     public async Task CancelEditBookmark()
     {
         IsEditMode = false;
         BookmarkToEdit = null;
-        await InvokeAsync(StateHasChanged);
+        await InvokeAsync(StateHasChanged); //todo this shouldn't be needed? check edit folder title
     }
 
     public async Task SaveEditBookmark(int id, string bookmarkName, string bookmarkUrl)
     {
         //todo validation
+        //todo undo is REALLY funky here
         BookmarkToEdit.Name = bookmarkName;
         BookmarkToEdit.Url = bookmarkUrl;
-        //todo persist
-        await facade.EditBookmark(id, bookmarkName, bookmarkUrl);
+        var bookmark = CurrentState.Bookmarks.Single(x=>x.Id == id);
+        bookmark.Name = bookmarkName;
+        bookmark.Url = bookmarkUrl;
+
+        await SnapShotCallback.InvokeAsync();
         await CancelEditBookmark();
     }
 

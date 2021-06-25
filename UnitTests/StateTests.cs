@@ -198,43 +198,5 @@ namespace UnitTests
 
             var x = folders;
         }
-
-       
-
-        [Fact]
-        public async Task Should_DeleteBookmark()
-        {
-            var orig = new Facade(new StateManager<StateModel>(), new BookmarkMemoryStore());
-            var folder1 = new FolderModel { Id = 1, Name = "Folder1" };
-            var folders = new List<FolderModel>() { folder1 };
-            var bookmark1 = new BookmarkModel() { Id = 1, FolderId = 1, Name = "Bookmark1" };
-            var bookmark2 = new BookmarkModel() { Id = 2, FolderId = 1, Name = "Bookmark2" };
-            var bookmarks = new List<BookmarkModel>() { bookmark1, bookmark2 };
-            var state = new StateModel(folders, bookmarks);
-            await orig.Snapshot(state);
-            await orig.DeleteBookmark(1);
-            state = await orig.GetState();
-            state.Bookmarks.Count.Should().Be(1);
-        }
-
-
-
-        [Fact]
-        public async Task Should_EditBookmark_AndUndo()
-        {
-            var orig = new Facade(new StateManager<StateModel>(), new BookmarkMemoryStore());
-            var folder1 = new FolderModel { Id = 1, Name = "Folder1" };
-            var folders = new List<FolderModel>() { folder1 };
-            var bookmark1 = new BookmarkModel() { Id = 1, FolderId = 1, Name = "Bookmark1" };
-            var bookmark2 = new BookmarkModel() { Id = 2, FolderId = 1, Name = "Bookmark2" };
-            var bookmarks = new List<BookmarkModel>() { bookmark1, bookmark2 };
-            var state = new StateModel(folders, bookmarks);
-            await orig.Snapshot(state);
-            await orig.EditBookmark(1, "Google", "www.google.com");
-            state = await orig.GetState();
-            state.Bookmarks.Count.Should().Be(2);
-            state.Bookmarks.First().Name.Should().Be("Google");
-            state.Bookmarks.First().Url.Should().Be("www.google.com");
-        }
     }
 }

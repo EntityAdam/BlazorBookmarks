@@ -17,25 +17,6 @@ namespace Core
             this.bookmarkStore = bookmarkStore;
         }
 
-        public async Task DeleteBookmark(int bookmarkId)
-        {
-            //remove from ui state
-            var state = await GetState();
-            state.Bookmarks.RemoveAll(x => x.Id == bookmarkId);
-            //snap
-            await Snapshot(state);
-        }
-
-        public async Task EditBookmark(int bookmarkId, string name, string url)
-        {
-            var state = await GetState();
-            var bookmarkToEdit = state.Bookmarks.Single(x => x.Id == bookmarkId);
-            //todo mutation, want immutable
-            bookmarkToEdit.Name = name;
-            bookmarkToEdit.Url = url;
-            await Snapshot(state);
-        }
-
         public async Task<StateModel> GetState() => await stateManager.GetState();
 
         public async Task<StateModel> GetStateFromStore()
