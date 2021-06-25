@@ -57,10 +57,9 @@ else
 
     public async Task IncrementClicks(int bookmarkId)
     {
-        await facade.IncrementClicks(bookmarkId);
         var bookmark = CurrentState.Bookmarks.Single(x => x.Id == bookmarkId);
         bookmark.Clicks++;
-        await InvokeAsync(StateHasChanged);
+        await SnapShotCallback.InvokeAsync(); //TODO this should be save, not snapsot. doesn't make sense to undo/redo
     }
 
     public async Task AddFolder(string folderName)
