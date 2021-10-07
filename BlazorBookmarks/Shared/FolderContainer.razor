@@ -23,9 +23,6 @@ else
     </div>
 }
 
-
-
-
 @code {
 
     [Parameter]
@@ -50,7 +47,7 @@ else
     public async Task EditFolderTitle(int folderId, string folderName)
     {
         //this is the correct pattern!! fix everything else
-        var folder = CurrentState.Folders.Single(x=>x.Id == folderId);
+        var folder = CurrentState.Folders.Single(x => x.Id == folderId);
         folder.Name = folderName;
         await SnapShotCallback.InvokeAsync();
     }
@@ -81,10 +78,32 @@ else
         await InvokeAsync(StateHasChanged);
     }
 
+    public async Task InsertNewBookmarkAtPosition(BookmarkModelUi dragTargetBookmark)
+    {
+        Console.WriteLine($"Firing InsertNewBookmarkAtPosition with a dragTargetBookmark of {dragTargetBookmark.Id} in Folder {dragTargetBookmark.FolderId}");
+
+        var newIndex = CurrentState.Bookmarks.Max(x => x.Id) + 1;
+
+        var p = CurrentState.Bookmarks.SingleOrDefault(x => x.Id == int.MaxValue);
+        if (p != null)
+        {
+            return;
+        }
+        var placeholder = new BookmarkModelUi() { Id = int.MaxValue, FolderId = dragTargetBookmark.FolderId, Name = "Placeholder", Url = "https://placeholder.com" };
+        var index = CurrentState.Bookmarks.FindIndex(x => x == dragTargetBookmark);
+        if (index >= 0)
+        {
+            placeholder.FolderId = dragTargetBookmark.FolderId;
+            CurrentState.Bookmarks.Insert(index, placeholder);
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+
     public async Task MoveBookmarkPosition(BookmarkModelUi dragTargetBookmark)
     {
         BookmarkDragPayload.FolderId = dragTargetBookmark.FolderId;
         var index = CurrentState.Bookmarks.FindIndex(x => x == dragTargetBookmark);
+        Console.WriteLine($"Want to insert bookmark at index {index}");
         if (index >= 0)
         {
             CurrentState.Bookmarks.RemoveAll(x => x == BookmarkDragPayload);
@@ -110,18 +129,20 @@ else
         navigationManager.NavigateTo(linkToNavigate.Url, true);
     }
 
-    private void HandleKeyPress(KeyboardEventArgs e)
+    private async Task HandleKeyPress(KeyboardEventArgs e)
     {
         var keys = e;
         if (e.CtrlKey)
         {
             if (e.Code == "KeyZ")
             {
-                UndoCallback.InvokeAsync().Wait();
+                Console.WriteLine("Undo: Invoked");
+                await UndoCallback.InvokeAsync();
             }
             else if (e.Code == "KeyY")
             {
-                RedoCallback.InvokeAsync().Wait();
+                Console.WriteLine("Redo: Invoked");
+                await RedoCallback.InvokeAsync();
             }
         }
     }
@@ -130,14 +151,14 @@ else
     {
         IsEditMode = true;
         BookmarkToEdit = CurrentState.Bookmarks.Single(x => x.Id == bookmarkId);
-        await InvokeAsync(StateHasChanged); //todo this shouldn't be needed? check edit folder title
+        await Task.CompletedTask;
     }
 
     public async Task CancelEditBookmark()
     {
         IsEditMode = false;
         BookmarkToEdit = null;
-        await InvokeAsync(StateHasChanged); //todo this shouldn't be needed? check edit folder title
+        await Task.CompletedTask;
     }
 
     public async Task SaveEditBookmark(int id, string bookmarkName, string bookmarkUrl)
@@ -146,7 +167,7 @@ else
         //todo undo is REALLY funky here
         BookmarkToEdit.Name = bookmarkName;
         BookmarkToEdit.Url = bookmarkUrl;
-        var bookmark = CurrentState.Bookmarks.Single(x=>x.Id == id);
+        var bookmark = CurrentState.Bookmarks.Single(x => x.Id == id);
         bookmark.Name = bookmarkName;
         bookmark.Url = bookmarkUrl;
 

@@ -5,12 +5,13 @@ using Core.Models;
 
 namespace Core
 {
-    public class BookmarkFileStore : IBookmarkStore
+    public class LocalBookmarkFileStore : IBookmarkStore
     {
         private async Task SaveToFile(StateModel state)
         {
+            var path = @"C:\bookmark-test\file.json";
             var jsonContent = JsonSerializer.Serialize(state);
-            await File.WriteAllTextAsync(@"C:\bookmark-test\file.json", jsonContent);
+            await File.WriteAllTextAsync(path, jsonContent);
         }
         private async Task<StateModel> ReadFromFile()
         {

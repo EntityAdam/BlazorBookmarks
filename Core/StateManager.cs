@@ -6,7 +6,6 @@ namespace Core
 {
     public sealed class StateManager<T> : IStateManager<T> where T : IDeepCloneable<T>
     {
-        //todo concurrent stack
         private readonly ConcurrentStack<T> UndoStack = new();
         private readonly ConcurrentStack<T> RedoStack = new();
 

@@ -27,19 +27,26 @@ else
         <li>[X] Edit bookmarks</li>
         <li>[X] Edit Folder Title</li>
         <li>[X] Increment Clicks when using navigation icon</li>
+        <li>[ ] BUG: Handle cancel drag with ESC??</li>
+        <li>[ ] Track created date</li>
         <li>[ ] Increment Clicks when clicking on bookmark</li>
         <li>[ ] Implement Save without Snapshot for Increment Clicks</li>
-        <li>[ ] Sort by most used</li>
-        <li>[ ] Remove old bookmarks (added N months ago)</li>
-        <li>[ ] Track created date</li>
-        <li>[ ] Remove bookmarks never used (never clicked on)</li>
-        <li>[ ] Track last clicked on date</li>
         <li>[ ] Drop URLs from the address bar</li>
         <li>[ ] Drop URLs from the bookmarks bar</li>
         <li>[ ] Import bookmarks from broswer export</li>
         <li>[ ] Export bookmarks to broswer export</li>
         <li>[ ] Show empy folders flag</li>
         <li>[ ] Grab icon and name from site?</li>
+        <li>
+            Sorting and filtering
+            <ul>
+                <li>[ ] Sort by most used</li>
+                <li>[ ] Remove old bookmarks (added N months ago)</li>
+                <li>[ ] Remove bookmarks never used (never clicked on)</li>
+                <li>[ ] Track last clicked on date</li>
+            </ul>
+        </li>
+
     </ul>
     <h2>Issues:</h2>
     <ul>
@@ -96,5 +103,11 @@ else
         var folders = stateModel.Folders.Select(x => new FolderModelUi() {Id = x.Id, Name = x.Name, LastUpdated = x.LastUpdated}).ToList();
         var bookmarks = stateModel.Bookmarks.Select(x => new BookmarkModelUi() {Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url, Clicks = x.Clicks}).ToList();
         return new StateModelUi(folders, bookmarks);
+    }
+
+    [JSInvokable]
+    public static void Testing(string e)
+    {
+        var result = e.Replace(System.Environment.NewLine, string.Empty);
     }
 }

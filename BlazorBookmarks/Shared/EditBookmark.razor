@@ -64,6 +64,7 @@ else
     {
         Name = BookmarkToEdit.Name;
         Url = BookmarkToEdit.Url;
+        await Task.CompletedTask;
     }
     
     private async Task HandleCancel()

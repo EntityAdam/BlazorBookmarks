@@ -12,7 +12,7 @@ namespace UnitTests
     public class FileStoreTests
     {
         [Fact]
-        public void CanSaveToFile()
+        public async Task CanSaveToFile()
         {
             var folders = new List<FolderModel>()
             {
@@ -71,15 +71,15 @@ namespace UnitTests
                 new BookmarkModel() { Id = 40, FolderId = 3, Name = "Folder3_Bookmark10",  Url = "https://entityadam.com" },
             };
             var state = new StateModel() { Folders = folders, Bookmarks = bookmarks };
-            var store = new BookmarkFileStore();
+            var store = new LocalBookmarkFileStore();
 
-            store.Save(state);
+            await store.Save(state);
         }
 
         [Fact]
         public async Task CanReadFromFile()
         {
-            var store = new BookmarkFileStore();
+            var store = new LocalBookmarkFileStore();
             var state = await store.Get();
 
             state.Should().BeOfType(typeof(StateModel));
