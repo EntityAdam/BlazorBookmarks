@@ -6,6 +6,7 @@
      @ondragleave="((e) => HandleOnDragLeave())"
      @ondragover:preventDefault
      @ondragover="((e) => HandleDragOver(Model))"
+     @ondrop:preventDefault
      @ondrop="((e) => HandleDrop(Model))">
 
     <!--<div class="@IsVisibleCssClass" style="pointer-events:none;">-->
@@ -60,6 +61,8 @@
 
     private async Task HandleDragOver(FolderModelUi collection)
     {
+        Console.WriteLine("Firing Folder HandleDragOver");
+
         if (Container.FolderDragPayload != null)
         {
             await Container.MoveFolderPosition(collection.Id, Container.FolderDragPayload);
@@ -73,6 +76,8 @@
 
     private async Task HandleDrop(FolderModelUi dropTarget)
     {
+        Console.WriteLine("Firing HandleDrop Folder");
+
         if (Container.FolderDragPayload != null)
         {
             Container.FolderDragPayload.Hidden = false;

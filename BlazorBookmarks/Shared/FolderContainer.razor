@@ -69,6 +69,7 @@ else
 
     public async Task MoveFolderPosition(int dragTargetFolderId, FolderModelUi folderDragPayload)
     {
+        Console.WriteLine($"Firing MoveFolderPosition");
         var dragTargetIndex = CurrentState.Folders.FindIndex(x => x.Id == dragTargetFolderId);
         if (dragTargetIndex >= 0)
         {
@@ -85,17 +86,21 @@ else
         var newIndex = CurrentState.Bookmarks.Max(x => x.Id) + 1;
 
         var p = CurrentState.Bookmarks.SingleOrDefault(x => x.Id == int.MaxValue);
+        
         if (p != null)
         {
             return;
         }
         var placeholder = new BookmarkModelUi() { Id = int.MaxValue, FolderId = dragTargetBookmark.FolderId, Name = "Placeholder", Url = "https://placeholder.com" };
+
         var index = CurrentState.Bookmarks.FindIndex(x => x == dragTargetBookmark);
+        
         if (index >= 0)
         {
             placeholder.FolderId = dragTargetBookmark.FolderId;
             CurrentState.Bookmarks.Insert(index, placeholder);
         }
+        
         await InvokeAsync(StateHasChanged);
     }
 
@@ -103,7 +108,7 @@ else
     {
         BookmarkDragPayload.FolderId = dragTargetBookmark.FolderId;
         var index = CurrentState.Bookmarks.FindIndex(x => x == dragTargetBookmark);
-        Console.WriteLine($"Want to insert bookmark at index {index}");
+        Console.WriteLine($"MoveBookmarkPosition : Want to move bookmark '{BookmarkDragPayload.Name}' in Folder ID: '{dragTargetBookmark.FolderId}' to index {index}");
         if (index >= 0)
         {
             CurrentState.Bookmarks.RemoveAll(x => x == BookmarkDragPayload);

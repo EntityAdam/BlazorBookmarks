@@ -17,8 +17,6 @@
     @ondragstart="((e) => HandleDragStart(e))"
     @ondragenter="((e) => HandleOnDragEnter())"
     @ondragleave="((e) => HandleOnDragLeave())"
-    @ondragover:preventDefault
-    @ondragover:stopPropagation
     @ondragover="((e) => HandleDragOver(Model))"
     @ondrop="((e) => HandleDrop())">
 
@@ -47,6 +45,7 @@
 
     private void HandleDragStart(DragEventArgs e)
     {
+        Console.WriteLine("Firing HandleDragStart");
         Container.BookmarkDragPayload = Model;
         Container.BookmarkDragPayload.Hidden = true;
     }
@@ -57,23 +56,32 @@
 
     private void HandleOnDragLeave()
     {
+
     }
 
     private async Task HandleDragOver(BookmarkModelUi target)
     {
-        Console.WriteLine("Firing HandleDragOver");
-        if (Container.BookmarkDragPayload == null)
+        Console.WriteLine("Firing Bookmark HandleDragOver");
+        if (Container.BookmarkDragPayload is not null)
         {
-            await Container.InsertNewBookmarkAtPosition(target);
+            await Container.MoveBookmarkPosition(target);
+        }
+        if (Container.FolderDragPayload is not null)
+        {
+            //dragging a folder, do nothing
+            return;
         }
         else
         {
-            await Container.MoveBookmarkPosition(target);
+            //this could be anything being dragged over
+            //todo adding bookmarks
+            //await Container.InsertNewBookmarkAtPosition(target);
         }
     }
 
     private void HandleDrop()
     {
+        Console.WriteLine("Firing HandleDrop Bookmark");
         if (Container.BookmarkDragPayload == null)
             return;
         Container.BookmarkDragPayload.Hidden = false;
