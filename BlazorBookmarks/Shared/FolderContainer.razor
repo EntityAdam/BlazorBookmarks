@@ -79,6 +79,15 @@ else
         await InvokeAsync(StateHasChanged);
     }
 
+    public async Task InsertNewBookmarkAtTop(BookmarkModelUi newBookmark)
+    {
+        var max = CurrentState.Bookmarks.Max(x => x.Id);
+        var newIndex = CurrentState.Bookmarks.Max(x => x.Id) + 1;
+        newBookmark.Id = newIndex;
+        CurrentState.Bookmarks.Insert(1, newBookmark);
+        await InvokeAsync(StateHasChanged);
+    }
+
     public async Task InsertNewBookmarkAtPosition(BookmarkModelUi dragTargetBookmark)
     {
         Console.WriteLine($"Firing InsertNewBookmarkAtPosition with a dragTargetBookmark of {dragTargetBookmark.Id} in Folder {dragTargetBookmark.FolderId}");

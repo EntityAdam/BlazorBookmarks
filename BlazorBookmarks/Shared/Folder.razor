@@ -6,14 +6,14 @@
      @ondragleave="((e) => HandleOnDragLeave())"
      @ondragover:preventDefault
      @ondragover="((e) => HandleDragOver(Model))"
-     @ondrop:preventDefault
      @ondrop="((e) => HandleDrop(Model))">
 
     <!--<div class="@IsVisibleCssClass" style="pointer-events:none;">-->
     <div class="@IsVisibleCssClass">
         <div class="flex justify-between">
-            <FolderTitle FolderId="@Model.Id" FolderName="@Model.Name"/>
+            <FolderTitle FolderId="@Model.Id" FolderName="@Model.Name" />
             <DeleteIcon Id="@Model.Id" DeleteCallback="Delete" />
+            <InputFile OnChange="OnInputFileChanged" multiple class="absolute mud-width-full mud-height-full overflow-hidden z-2" style="border:dotted; border-width:1; opacity:0;" />
         </div>
         <ul class="px-2 py-5" style="pointer-events:auto">
             @foreach (var b in Container.CurrentState.Bookmarks.Where(x => x.FolderId == Model.Id))
@@ -35,11 +35,42 @@
 
     private string IsVisibleCssClass => Model.Hidden ? "invisible" : "visible";
 
+    private bool isLoadingFiles;
+
+    private async Task OnInputFileChanged(InputFileChangeEventArgs e)
+    {
+        isLoadingFiles = true;
+        try
+        {
+            foreach (var file in e.GetMultipleFiles(int.MaxValue))
+            {
+                using MemoryStream memoryStream = new();
+                await file.OpenReadStream().CopyToAsync(memoryStream);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                using StreamReader streamReader = new(memoryStream);
+                var result1 = await streamReader.ReadLineAsync();
+                var result2 = await streamReader.ReadLineAsync();
+                if (result1 == "[InternetShortcut]" && result2 is not null)
+                {
+                    var name = Path.GetFileNameWithoutExtension(file.Name);
+                    var url = result2.Split('=')[1];
+                    await Container.InsertNewBookmarkAtTop(new BookmarkModelUi() { Name = name, FolderId = Model.Id, Url = url });
+                }
+            }
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+        isLoadingFiles = false;
+        await Container.SnapShotCallback.InvokeAsync();
+    }
+
     private async Task Delete()
     {
         await Container.DeleteFolder(Model.Id);
     }
-    
+
     private void HandleEditFolderTitle()
     {
         Console.WriteLine("Edit Folder Title");
