@@ -165,14 +165,14 @@ else
     {
         IsEditMode = true;
         BookmarkToEdit = CurrentState.Bookmarks.Single(x => x.Id == bookmarkId);
-        await Task.CompletedTask;
+        await InvokeAsync(StateHasChanged);
     }
 
     public async Task CancelEditBookmark()
     {
         IsEditMode = false;
         BookmarkToEdit = null;
-        await Task.CompletedTask;
+        await InvokeAsync(StateHasChanged);
     }
 
     public async Task SaveEditBookmark(int id, string bookmarkName, string bookmarkUrl)
