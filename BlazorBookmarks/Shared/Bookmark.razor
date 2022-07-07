@@ -21,7 +21,7 @@
     @ondrop="((e) => HandleDrop())">
 
     <div @onclick="Navigate" class="flex justify-between">
-        <p>(@Model.Clicks) @Model.Name</p>
+        <p class="truncate">(@Model.Clicks) @Model.Name</p>
         <div class="flex justify-end ml-3">
             <EditIcon BookmarkId="@Model.Id" />
             <NavigateIcon BookmarkId="@Model.Id" Url="@Model.Url" />
