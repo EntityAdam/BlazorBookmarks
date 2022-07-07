@@ -9,12 +9,16 @@
      @ondrop="((e) => HandleDrop(Model))">
 
     <!--<div class="@IsVisibleCssClass" style="pointer-events:none;">-->
-    <div class="@IsVisibleCssClass">
+    <div class="@IsVisibleCssClass max-w-sm" style="position:relative">
         <div class="flex justify-between">
             <FolderTitle FolderId="@Model.Id" FolderName="@Model.Name" />
             <DeleteIcon Id="@Model.Id" DeleteCallback="Delete" />
-            <InputFile OnChange="OnInputFileChanged" multiple class="absolute mud-width-full mud-height-full overflow-hidden z-2" style="border:dotted; border-width:1; opacity:0;" />
         </div>
+        <div class="@IsDragBoxShown" style="border:dotted; border-width:1; border-color:red; opacity:1;">
+            <p style="position:absolute; left:5px; top:30px;">Drop bookmarks here</p>
+            <InputFile OnChange="OnInputFileChanged" multiple class="w-full" style="border:dotted; border-width:1; opacity:0;" />
+        </div>
+
         <ul class="px-2 py-5" style="pointer-events:auto">
             @foreach (var b in Container.CurrentState.Bookmarks.Where(x => x.FolderId == Model.Id))
             {
@@ -34,6 +38,11 @@
     public FolderModelUi Model { get; set; }
 
     private string IsVisibleCssClass => Model.Hidden ? "invisible" : "visible";
+
+    private bool showDragBox = false;
+    private int dragBoxTarget;
+    private string IsDragBoxShown => showDragBox ? "block" : "hidden";
+
 
     private bool isLoadingFiles;
 
@@ -84,30 +93,46 @@
 
     private void HandleOnDragEnter()
     {
+
+    }
+
+    private void ShowDragBox()
+    {
+
     }
 
     private void HandleOnDragLeave()
     {
+        Console.WriteLine("Firing Folder HandleOnDragLeave");
     }
 
     private async Task HandleDragOver(FolderModelUi collection)
     {
         Console.WriteLine("Firing Folder HandleDragOver");
 
-        if (Container.FolderDragPayload != null)
+        if (Container.FolderDragPayload is null && Container.BookmarkDragPayload is null)
         {
-            await Container.MoveFolderPosition(collection.Id, Container.FolderDragPayload);
+            showDragBox = true;
         }
-
-        if (Container.BookmarkDragPayload != null)
+        else
         {
-            await Container.MoveBookmarkToFolder(collection);
+            if (Container.FolderDragPayload != null)
+            {
+                await Container.MoveFolderPosition(collection.Id, Container.FolderDragPayload);
+            }
+
+            if (Container.BookmarkDragPayload != null)
+            {
+                await Container.MoveBookmarkToFolder(collection);
+            }
         }
     }
 
     private async Task HandleDrop(FolderModelUi dropTarget)
     {
         Console.WriteLine("Firing HandleDrop Folder");
+
+        if (showDragBox) { showDragBox = false; }
 
         if (Container.FolderDragPayload != null)
         {
