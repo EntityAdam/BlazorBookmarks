@@ -84,7 +84,7 @@ else
         var max = CurrentState.Bookmarks.Max(x => x.Id);
         var newIndex = CurrentState.Bookmarks.Max(x => x.Id) + 1;
         newBookmark.Id = newIndex;
-        CurrentState.Bookmarks.Insert(1, newBookmark);
+        CurrentState.Bookmarks.Insert(0, newBookmark);
         await InvokeAsync(StateHasChanged);
     }
 
