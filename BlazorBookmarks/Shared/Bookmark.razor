@@ -1,4 +1,5 @@
 ﻿@inject NavigationManager navigationManager
+@inject IJSRuntime JSRuntime
 
 <style>
     .edit-svg svg {
@@ -20,7 +21,7 @@
     @ondragover="((e) => HandleDragOver(Model))"
     @ondrop="((e) => HandleDrop())">
 
-    <div @onclick="Navigate" class="flex justify-between">
+    <div @onclick="HandleOnClick" @onclick:preventDefault class="flex justify-between">
         <p class="truncate">(@Model.Clicks) @Model.Name</p>
         <div class="flex justify-end ml-3">
             <EditIcon BookmarkId="@Model.Id" />
@@ -88,12 +89,16 @@
         Container.BookmarkDragPayload = null;
     }
 
-    private async Task Navigate()
+    private async Task HandleOnClick()
     {
-        //TODO: JS Interop navigate with target="_blank"
-        //todo this isn't working yet
-        //await Container.IncrementClicks(Model.Id);
-        navigationManager.NavigateTo(Model.Url, true);
+        //supporting navigation for now, may want to do other things like multi-select
+        await Container.IncrementClicks(Model.Id);
+        await NavigateInNewTab(Model.Url);
+    }
+
+    private async Task NavigateInNewTab(string url)
+    {
+        await JSRuntime.InvokeAsync<object>("open", url, "_blank");
     }
 
     private async Task Delete()
