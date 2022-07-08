@@ -11,19 +11,24 @@ else
 {
     <!-- removed @onkeypress:preventDefault, this blocked child <input/> elements -->
     <div class="flex flex-wrap items-baseline bg-black"
-         tabindex="1"
-         @onkeypress="((e) => HandleKeyPress(e))">
+     tabindex="1"
+     @onkeypress="((e) => HandleKeyPress(e))">
         <CascadingValue Value="@this">
             @foreach (var folder in CurrentState.Folders)
             {
-                <Folder Model="@folder" />
+                if (isShowEmptyFolders || CurrentState.Bookmarks.Any(b => b.FolderId == folder.Id))
+                {
+                    <Folder Model="@folder" />
+                }
             }
-            <Addfolder />
-        </CascadingValue>
-    </div>
+        <Addfolder />
+    </CascadingValue>
+</div>
 }
 
 @code {
+    //TODO: Toggle
+    private bool isShowEmptyFolders = true;
 
     [Parameter]
     public StateModelUi CurrentState { get; set; }
@@ -95,7 +100,7 @@ else
         var newIndex = CurrentState.Bookmarks.Max(x => x.Id) + 1;
 
         var p = CurrentState.Bookmarks.SingleOrDefault(x => x.Id == int.MaxValue);
-        
+
         if (p != null)
         {
             return;
@@ -103,13 +108,13 @@ else
         var placeholder = new BookmarkModelUi() { Id = int.MaxValue, FolderId = dragTargetBookmark.FolderId, Name = "Placeholder", Url = "https://placeholder.com" };
 
         var index = CurrentState.Bookmarks.FindIndex(x => x == dragTargetBookmark);
-        
+
         if (index >= 0)
         {
             placeholder.FolderId = dragTargetBookmark.FolderId;
             CurrentState.Bookmarks.Insert(index, placeholder);
         }
-        
+
         await InvokeAsync(StateHasChanged);
     }
 
@@ -145,7 +150,6 @@ else
 
     private async Task HandleKeyPress(KeyboardEventArgs e)
     {
-        var keys = e;
         if (e.CtrlKey)
         {
             if (e.Code == "KeyZ")
