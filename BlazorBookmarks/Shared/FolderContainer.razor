@@ -7,27 +7,44 @@
         <EditBookmark BookmarkToEdit="BookmarkToEdit" />
     </CascadingValue>
 }
+else if (IsShowSettings)
+{
+    <CascadingValue Value="@this">
+        <Settings />
+    </CascadingValue>
+}
 else
 {
-    <!-- removed @onkeypress:preventDefault, this blocked child <input/> elements -->
-    <div @ondrop:preventDefault @ondrop="((e) => HandleOnDrop(e))" @ondragover:preventDefault class="flex flex-wrap py-5 items-baseline" style="background-color:#4a148c;"
-     tabindex="1"
-     @onkeypress="((e) => HandleKeyPress(e))">
-        <CascadingValue Value="@this">
-            @foreach (var folder in CurrentState.Folders)
+    <CascadingValue Value="@this">
+        <AppBar />
+        <div 
+            @ondrop:preventDefault 
+            @ondrop="((e) => HandleOnDrop(e))" 
+            @ondragover:preventDefault 
+            @onkeypress="((e) => HandleKeyPress(e))"
+            class="flex flex-wrap py-5 items-baseline" 
+            style="background-color:#4a148c;" tabindex="1">
+
+        @foreach (var folder in CurrentState.Folders)
+        {
+            if (isShowEmptyFolders || CurrentState.Bookmarks.Any(b => b.FolderId == folder.Id))
             {
-                if (isShowEmptyFolders || CurrentState.Bookmarks.Any(b => b.FolderId == folder.Id))
-                {
-                    <Folder Model="@folder" />
-                }
+                <Folder Model="@folder" />
             }
+        }
         <Addfolder />
-    </CascadingValue>
-</div>
+    </div>
+</CascadingValue>
 }
 
 @code {
 
+    private bool IsShowSettings = false;
+    public async Task ShowSettings()
+    {
+        IsShowSettings = true;
+        await InvokeAsync(StateHasChanged);
+    }
     private void HandleOnDrop(DragEventArgs e)
     {
         Console.WriteLine("FolderContainer Firing HandleOnDrop");
