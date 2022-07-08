@@ -1,7 +1,6 @@
 ﻿@inject IFacade facade
 @page "/"
 
-<h1 class="text-4xl">Bookmarks</h1>
 @if (State == null)
 {
     <h1>Loading...</h1>
@@ -40,15 +39,15 @@ else
         <li>[ ] Export bookmarks to broswer export</li>
         <li>[ ] Show empy folders flag</li>
         <li>[ ] Grab icon and name from site?</li>
-        <li>[?] BUG: Dragging thin folder over wide folder can cause the elements to flip flop posistions [Partially Resolved by Truncating Bookmark Length</li>
         <li>[X] Bookmarks: truncate long text?</li>
-        <li>[X] BUG: Bookmark not resizing on folder resize</li>
-        <li>[X] BUG: Folder delete icon not moving on folder resize</li>
-        
+        <li>[ ] UI Settings</li>
         <li>
             Sorting and filtering
             <ul>
                 <li>[ ] Sort by most used</li>
+                <li>[ ] GROUP by used / not used</li>
+                <li>[ ] Highlight duplicates?</li>
+                <li>[ ] Remove duplicates but roll up click count</li>
                 <li>[ ] Remove old bookmarks (added N months ago)</li>
                 <li>[ ] Remove bookmarks never used (never clicked on)</li>
                 <li>[ ] Track last clicked on date</li>
@@ -58,9 +57,17 @@ else
     </ul>
     <h2>Issues:</h2>
     <ul>
+        <li>[ ] UI: Fix left padding on first folder</li>
+        <li>[ ] UI: Better Colors</li>
+        <li>[ ] UI: Scale up</li>
+        <li>[ ] UI: Light / Dark Mode</li>
+        <li>[ ] UI: AppBar with settings / GitHub</li>
         <li>[ ] Moving folders doesn't hide the target folder bookmarks</li>
         <li>[ ] Undo when editing a bookmark not working</li>
         <li>[X] Clicking the launch icon on a bookmark launches it twice</li>
+        <li>[X] BUG: Bookmark not resizing on folder resize</li>
+        <li>[X] BUG: Folder delete icon not moving on folder resize</li>
+        <li>[?] BUG: Dragging thin folder over wide folder can cause the elements to flip flop posistions [Partially Resolved by Truncating Bookmark Length</li>
     </ul>
 </div>
 <EditBookmarkModal/>
