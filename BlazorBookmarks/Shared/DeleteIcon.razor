@@ -1,7 +1,7 @@
 ﻿<svg xmlns="http://www.w3.org/2000/svg"
      class="pt-1 hover:bg-gray-400"
-     width="16"
-     height="16"
+     width="@Size"
+     height="@Size"
      @onclick="HandleDelete"
      @onclick:stopPropagation
      viewBox="0 0 1000 1000">
@@ -10,9 +10,14 @@
 
 @code {
 
+    private const int _defaultSize = 16;
+
     [Parameter]
     public int Id { get; set; }
-    
+
+    [Parameter]
+    public int Size { get; set; } = _defaultSize;
+
     [Parameter]
     public EventCallback<int> DeleteCallback { get; set; }
 

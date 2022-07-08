@@ -1,4 +1,4 @@
-﻿<div class="flex flex-col flex-grow mb-1 mx-2 w-64 resize-x overflow-auto bg-indigo-100" style="flex-basis: auto;"
+﻿<div class="flex flex-col flex-grow mb-1 mx-2 w-64 resize-x overflow-auto" style="flex-basis: auto; background-color:#9ccc65;"
      draggable="true"
      dropzone="move"
      @ondragstart="((e) => HandleDragStart(Model))"
@@ -10,16 +10,16 @@
 
     <!--<div class="@IsVisibleCssClass" style="pointer-events:none;">-->
     <div class="@IsVisibleCssClass" style="position:relative">
-        <div class="flex justify-between">
+        <div class="flex justify-between px-3 pb-2 items-center" style="background-color:#6b9b37;">
             <FolderTitle FolderId="@Model.Id" FolderName="@Model.Name" />
-            <DeleteIcon Id="@Model.Id" DeleteCallback="Delete" />
+            <DeleteIcon Id="@Model.Id" DeleteCallback="Delete" Size="24" />
         </div>
         <div class="@IsDragBoxShown" style="border:dotted; border-width:1; border-color:red; opacity:1;">
             <p style="position:absolute; left:5px; top:30px;">Drop bookmarks here</p>
             <InputFile OnChange="OnInputFileChanged" multiple class="w-full" style="border:dotted; border-width:1; opacity:0;" />
         </div>
 
-        <ul class="px-2 py-5" style="pointer-events:auto">
+        <ul class="px-3 py-5" style="pointer-events:auto">
             @foreach (var b in Container.CurrentState.Bookmarks.Where(x => x.FolderId == Model.Id))
             {
                 <Bookmark Model="@b" />
