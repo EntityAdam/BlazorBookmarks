@@ -6,7 +6,8 @@
      @ondragleave="((e) => HandleOnDragLeave())"
      @ondragover:preventDefault
      @ondragover="((e) => HandleDragOver(Model))"
-     @ondrop="((e) => HandleDrop(Model))">
+     @ondrop="((e) => HandleDrop(Model))"
+     @ondrop:stopPropagation>
 
     <!--<div class="@IsVisibleCssClass" style="pointer-events:none;">-->
     <div class="@IsVisibleCssClass" style="position:relative">
@@ -14,8 +15,8 @@
             <FolderTitle FolderId="@Model.Id" FolderName="@Model.Name" />
             <DeleteIcon Id="@Model.Id" DeleteCallback="Delete" Size="24" />
         </div>
-        <div class="@IsDragBoxShown" style="border:dotted; border-width:1; border-color:red; opacity:1;">
-            <p style="position:absolute; left:5px; top:30px;">Drop bookmarks here</p>
+        <div class="@IsDragBoxShown" style="border:dotted; border-width:1; border-color:#7953d2; opacity:1;">
+            <p style="position:absolute; left:5px; top:45px;">Drop bookmarks here</p>
             <InputFile OnChange="OnInputFileChanged" multiple class="w-full" style="border:dotted; border-width:1; opacity:0;" />
         </div>
 

@@ -19,7 +19,9 @@
     @ondragenter="((e) => HandleOnDragEnter())"
     @ondragleave="((e) => HandleOnDragLeave())"
     @ondragover="((e) => HandleDragOver(Model))"
-    @ondrop="((e) => HandleDrop())">
+    @ondrop="((e) => HandleDrop())"
+    @ondrop:preventDefault
+    @ondrop:stopPropagation>
 
     <div @onclick="HandleOnClick" @onclick:preventDefault class="flex justify-between">
         <p class="truncate text-md">(@Model.Clicks) @Model.Name</p>

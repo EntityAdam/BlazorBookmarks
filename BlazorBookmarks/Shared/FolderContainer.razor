@@ -10,7 +10,7 @@
 else
 {
     <!-- removed @onkeypress:preventDefault, this blocked child <input/> elements -->
-    <div class="flex flex-wrap py-5 items-baseline" style="background-color:#4a148c;"
+    <div @ondrop:preventDefault @ondrop="((e) => HandleOnDrop(e))" @ondragover:preventDefault class="flex flex-wrap py-5 items-baseline" style="background-color:#4a148c;"
      tabindex="1"
      @onkeypress="((e) => HandleKeyPress(e))">
         <CascadingValue Value="@this">
@@ -27,6 +27,12 @@ else
 }
 
 @code {
+
+    private void HandleOnDrop(DragEventArgs e)
+    {
+        Console.WriteLine("FolderContainer Firing HandleOnDrop");
+        _ = e;
+    }
     //TODO: Toggle
     private bool isShowEmptyFolders = true;
 
