@@ -1,8 +1,8 @@
 ﻿<svg xmlns="http://www.w3.org/2000/svg"
      class="rounded hover:bg-gray-400"
-     width="@Size"
-     height="@Size"
-     @onclick="HandleDelete"
+     width="@IconSize"
+     height="@IconSize"
+     @onclick="HandloeOnClick"
      @onclick:stopPropagation
      viewBox="0 0 1000 1000">
     <path d="M836.9 316.2v551.2c0 67.7-54.8 122.5-122.5 122.5H285.6c-67.7 0-122.5-54.8-122.5-122.5V316.2c-33.8 0-61.3-27.4-61.3-61.2v-61.3c0-33.8 27.4-61.2 61.3-61.2h183.7V71.2c0-33.8 27.4-61.2 61.2-61.2h183.7c33.8 0 61.3 27.4 61.3 61.2v61.2h183.8c33.8 0 61.2 27.4 61.2 61.2V255c.1 33.8-27.3 61.2-61.1 61.2zm-627.1 0v567c0 33.8 26.3 61.3 60.1 61.3h460.2c33.8 0 61.3-27.4 61.3-61.3v-567H209.8zm182.6-183.7V86.1c0-16.9 13.7-30.6 30.6-30.6h154c16.9 0 30.6 13.7 30.6 30.6v46.3c-29.7.1-215.2.1-215.2.1M822 178.1H178c-16.9 0-30.6 25.9-30.6 46.2 0 20.3 13.7 46.2 30.6 46.2h644c16.9 0 30.6-25.9 30.6-46.2 0-20.3-13.7-46.2-30.6-46.2zM380.9 438.7c12.6 0 22.8 13.7 22.8 30.6v367.5c0 16.9-10.2 30.6-22.8 30.6-12.6 0-22.8-13.7-22.8-30.6V469.4c0-16.9 10.2-30.7 22.8-30.7zm122.4 0c12.6 0 22.7 13.7 22.7 30.6v367.5c0 16.9-10.2 30.6-22.7 30.6s-22.7-13.7-22.7-30.6V469.4c0-16.9 10.2-30.7 22.7-30.7zm122.5 0c12.5 0 22.7 13.7 22.7 30.6v367.5c0 16.9-10.2 30.6-22.7 30.6s-22.7-13.7-22.7-30.6V469.4c0-16.9 10.2-30.7 22.7-30.7z" />
@@ -10,18 +10,18 @@
 
 @code {
 
-    private const int _defaultSize = 18;
+    private const int _defauldIconSize = 18;
 
     [Parameter]
     public int Id { get; set; }
 
     [Parameter]
-    public int Size { get; set; } = _defaultSize;
+    public int IconSize { get; set; } = _defauldIconSize;
 
     [Parameter]
     public EventCallback<int> DeleteCallback { get; set; }
 
-    private async Task HandleDelete()
+    private async Task HandloeOnClick()
     {
         await DeleteCallback.InvokeAsync(Id);
     }

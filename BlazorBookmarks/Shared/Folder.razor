@@ -9,6 +9,7 @@
      @ondrop="((e) => HandleDrop(FolderModel))"
      @ondrop:stopPropagation>
     <div class="@IsVisibleCssClass()" style="position:relative">
+        @*TODO: Move the FolderTitle to the Folder Component*@
         <FolderTitle FolderId="@FolderModel.Id" FolderName="@FolderModel.Name" />
         <div class="@IsDragBoxShown() bg-teal-600 border-1" style="border:dotted;">
             <p style="position:absolute; left:5px; top:45px;">Drop bookmarks here</p>

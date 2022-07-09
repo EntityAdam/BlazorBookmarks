@@ -1,5 +1,6 @@
 ﻿@inject IJSRuntime _jsRuntime
-<div @onclick="HandleNavigate" @onclick:stopPropagation>
+
+<div @onclick="HandleOnClick" @onclick:stopPropagation>
     <svg xmlns="http://www.w3.org/2000/svg"
          class="rounded hover:bg-gray-400"
          width="18"
@@ -19,7 +20,7 @@
     [Parameter]
     public string Url { get; set; }
 
-    private async Task HandleNavigate()
+    private async Task HandleOnClick()
     {
         await Container.IncrementClicks(BookmarkId);
         await _jsRuntime.InvokeVoidAsync("eval", $"let _discard_ = open(`{Url}`, `_blank`)");

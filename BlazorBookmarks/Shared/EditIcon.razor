@@ -1,5 +1,5 @@
 ﻿<svg xmlns="http://www.w3.org/2000/svg"
-     @onclick="HandleEdit"
+     @onclick="HandleOnClick"
      @onclick:stopPropagation
      class="rounded hover:bg-gray-400"
      width="18"
@@ -15,7 +15,7 @@
     [Parameter]
     public int BookmarkId { get; set; }
 
-    private async Task HandleEdit()
+    private async Task HandleOnClick()
     {
         await Container.EditBookmark(BookmarkId);
     }

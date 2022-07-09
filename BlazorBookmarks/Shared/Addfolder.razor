@@ -1,15 +1,13 @@
 ﻿@if (!IsShowEditor)
 {
-    <div @onclick="ShowEditor" class="flex flex-col">
-        <div class="bg-blue-100">
-            + Add another folder
-        </div>
+    <div @onclick="ShowEditor" class="flex px-4 py-1 bg-teal-600">
+        <input type="button" value="Add New Folder" class="form-control transition ease-in-out text-sm border-1 px-2 py-2 rounded bg-blue-600 hover:bg-blue-800" />
     </div>
 }
 else
 {
     <div class="flex flex-col bg-blue-100">
-        <input type="text" placeholder="Folder Name" @bind-value="FolderName"/>
+        <input type="text" placeholder="Folder Name" @bind-value="FolderName" />
         <div class="flex">
             <button @onclick="AddFolder" class="px-2 py-2 border-2 rounded bg-blue-400 hover:bg-blue-500">Save</button>
             <button @onclick="CancelEdit" class="px-2 py-2 border-2 rounded bg-gray-400 hover:bg-gray-500">X</button>
@@ -22,8 +20,9 @@ else
     [CascadingParameter]
     public FolderContainer Container { get; set; }
 
-    private bool IsShowEditor { get; set; }
+    private bool IsShowEditor { get; set; } = false;
 
+    //TODO: Make nullable
     private string FolderName { get; set; }
 
     private async Task ShowEditor()
