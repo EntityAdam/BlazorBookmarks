@@ -28,7 +28,7 @@ else
         {
             if (isShowEmptyFolders || CurrentState.Bookmarks.Any(b => b.FolderId == folder.Id))
             {
-                <Folder Model="@folder" />
+                <Folder FolderModel="@folder" />
             }
         }
         <Addfolder />
@@ -37,20 +37,6 @@ else
 }
 
 @code {
-
-    private bool IsShowSettings = false;
-    public async Task ShowSettings()
-    {
-        IsShowSettings = true;
-        await InvokeAsync(StateHasChanged);
-    }
-    private void HandleOnDrop(DragEventArgs e)
-    {
-        Console.WriteLine("FolderContainer Firing HandleOnDrop");
-        _ = e;
-    }
-    //TODO: Toggle
-    private bool isShowEmptyFolders = true;
 
     [Parameter]
     public StateModelUi CurrentState { get; set; }
@@ -64,16 +50,30 @@ else
     [Parameter]
     public EventCallback RedoCallback { get; set; }
 
-    public FolderModelUi FolderDragPayload { get; set; }
-
-    public BookmarkModelUi BookmarkDragPayload { get; set; }
+    private bool IsShowSettings { get; set; } = false;
 
     private bool IsEditMode { get; set; } = false;
+
+    //TODO: Make nullable
     private BookmarkModelUi BookmarkToEdit { get; set; }
+
+    //TODO: Toggle
+    private bool isShowEmptyFolders = true;
+
+    //TODO: Make nullable
+    public FolderModelUi FolderDragPayload { get; set; }
+
+    //TODO: Make nullable
+    public BookmarkModelUi BookmarkDragPayload { get; set; }
+
+    public async Task ShowSettings()
+    {
+        IsShowSettings = true;
+        await InvokeAsync(StateHasChanged);
+    }
 
     public async Task EditFolderTitle(int folderId, string folderName)
     {
-        //this is the correct pattern!! fix everything else
         var folder = CurrentState.Folders.Single(x => x.Id == folderId);
         folder.Name = folderName;
         await SnapShotCallback.InvokeAsync();
@@ -96,7 +96,6 @@ else
 
     public async Task MoveFolderPosition(int dragTargetFolderId, FolderModelUi folderDragPayload)
     {
-        Console.WriteLine($"Firing MoveFolderPosition");
         var dragTargetIndex = CurrentState.Folders.FindIndex(x => x.Id == dragTargetFolderId);
         if (dragTargetIndex >= 0)
         {
@@ -120,17 +119,14 @@ else
         Console.WriteLine($"Firing InsertNewBookmarkAtPosition with a dragTargetBookmark of {dragTargetBookmark.Id} in Folder {dragTargetBookmark.FolderId}");
 
         var newIndex = CurrentState.Bookmarks.Max(x => x.Id) + 1;
-
         var p = CurrentState.Bookmarks.SingleOrDefault(x => x.Id == int.MaxValue);
-
         if (p != null)
         {
             return;
         }
+
         var placeholder = new BookmarkModelUi() { Id = int.MaxValue, FolderId = dragTargetBookmark.FolderId, Name = "Placeholder", Url = "https://placeholder.com" };
-
         var index = CurrentState.Bookmarks.FindIndex(x => x == dragTargetBookmark);
-
         if (index >= 0)
         {
             placeholder.FolderId = dragTargetBookmark.FolderId;
@@ -168,23 +164,6 @@ else
     public void Navigate(BookmarkModelUi linkToNavigate)
     {
         navigationManager.NavigateTo(linkToNavigate.Url, true);
-    }
-
-    private async Task HandleKeyPress(KeyboardEventArgs e)
-    {
-        if (e.CtrlKey)
-        {
-            if (e.Code == "KeyZ")
-            {
-                Console.WriteLine("Undo: Invoked");
-                await UndoCallback.InvokeAsync();
-            }
-            else if (e.Code == "KeyY")
-            {
-                Console.WriteLine("Redo: Invoked");
-                await RedoCallback.InvokeAsync();
-            }
-        }
     }
 
     public async Task EditBookmark(int bookmarkId)
@@ -238,7 +217,7 @@ else
         uiFolders.Add(new() { Id = folderIndex, Name = "IMPORTED", LastUpdated = DateTime.UtcNow });
 
         var bookmarkIndex = CurrentState.Bookmarks.Max(x => x.Id);
-        foreach(var bookmark in bookmarks)
+        foreach (var bookmark in bookmarks)
         {
             bookmarkIndex++;
             uiBookmarks.Add(new() { Id = bookmarkIndex, Url = bookmark.Url, FolderId = folderIndex, Name = bookmark.Name });
@@ -252,5 +231,28 @@ else
         await SnapShotCallback.InvokeAsync();
         IsShowSettings = false;
         await InvokeAsync(StateHasChanged);
+    }
+
+    private void HandleOnDrop(DragEventArgs e)
+    {
+        Console.WriteLine("FolderContainer Firing HandleOnDrop");
+        _ = e;
+    }
+
+    private async Task HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.CtrlKey)
+        {
+            if (e.Code == "KeyZ")
+            {
+                Console.WriteLine("Undo: Invoked");
+                await UndoCallback.InvokeAsync();
+            }
+            else if (e.Code == "KeyY")
+            {
+                Console.WriteLine("Redo: Invoked");
+                await RedoCallback.InvokeAsync();
+            }
+        }
     }
 }

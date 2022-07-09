@@ -1,26 +1,24 @@
 ﻿<div class="flex flex-col flex-grow mb-1 mx-2 w-64 resize-x overflow-auto bg-teal-300" style="flex-basis: auto;"
      draggable="true"
      dropzone="move"
-     @ondragstart="((e) => HandleDragStart(Model))"
+     @ondragstart="((e) => HandleDragStart(FolderModel))"
      @ondragenter="((e) => HandleOnDragEnter())"
      @ondragleave="((e) => HandleOnDragLeave())"
+     @ondragover="((e) => HandleDragOver(FolderModel))"
      @ondragover:preventDefault
-     @ondragover="((e) => HandleDragOver(Model))"
-     @ondrop="((e) => HandleDrop(Model))"
+     @ondrop="((e) => HandleDrop(FolderModel))"
      @ondrop:stopPropagation>
-
-    <!--<div class="@IsVisibleCssClass" style="pointer-events:none;">-->
-    <div class="@IsVisibleCssClass" style="position:relative">
-        <FolderTitle FolderId="@Model.Id" FolderName="@Model.Name" />
-        <div class="@IsDragBoxShown bg-teal-600" style="border:dotted; border-width:1; opacity:1;">
+    <div class="@IsVisibleCssClass()" style="position:relative">
+        <FolderTitle FolderId="@FolderModel.Id" FolderName="@FolderModel.Name" />
+        <div class="@IsDragBoxShown() bg-teal-600 border-1" style="border:dotted;">
             <p style="position:absolute; left:5px; top:45px;">Drop bookmarks here</p>
+            @*//change opacity 0 to hidden?*@
             <InputFile OnChange="OnInputFileChanged" multiple class="w-full" style="border:dotted; border-width:1; opacity:0;" />
         </div>
-
         <ul class="px-3 py-5" style="pointer-events:auto">
-            @foreach (var b in Container.CurrentState.Bookmarks.Where(x => x.FolderId == Model.Id))
+            @foreach (var bookmark in FolderContainer.CurrentState.Bookmarks.Where(x => x.FolderId == FolderModel.Id))
             {
-                <Bookmark Model="@b" />
+                <Bookmark Model="@bookmark" />
             }
         </ul>
     </div>
@@ -29,72 +27,75 @@
 
 
 @code {
+
     [CascadingParameter]
-    public FolderContainer Container { get; set; }
+    public FolderContainer FolderContainer { get; set; }
 
     [Parameter]
-    public FolderModelUi Model { get; set; }
+    public FolderModelUi FolderModel { get; set; }
 
-    private string IsVisibleCssClass => Model.Hidden ? "invisible" : "visible";
+
+    private const int maximumFileCount = 400; //TODO: Test this to see if it's slow
+
+    //convert to nullable?
+    private int dragBoxTarget;
 
     private bool showDragBox = false;
-    private int dragBoxTarget;
-    private string IsDragBoxShown => showDragBox ? "block" : "hidden";
 
+    private bool isLoadingFiles = false; //TODO: use this to show a spinner?
 
-    private bool isLoadingFiles;
+    private string IsVisibleCssClass() => FolderModel.Hidden ? "invisible" : "visible";
 
-    private async Task OnInputFileChanged(InputFileChangeEventArgs e)
-    {
+    private string IsDragBoxShown() => showDragBox ? "block" : "hidden";
+
+    private async Task OnInputFileChanged(InputFileChangeEventArgs args)
+    {   
+        //TODO: extract method
         isLoadingFiles = true;
         try
         {
-            foreach (var file in e.GetMultipleFiles(int.MaxValue))
+            foreach (var file in args.GetMultipleFiles(maximumFileCount))
             {
+                //TODO: Check for memory leak
                 using MemoryStream memoryStream = new();
                 await file.OpenReadStream().CopyToAsync(memoryStream);
                 memoryStream.Seek(0, SeekOrigin.Begin);
                 using StreamReader streamReader = new(memoryStream);
-                var result1 = await streamReader.ReadLineAsync();
-                var result2 = await streamReader.ReadLineAsync();
-                if (result1 == "[InternetShortcut]" && result2 is not null)
+                var urlFileHeader = await streamReader.ReadLineAsync();
+                var urlFileValue = await streamReader.ReadLineAsync();
+                if (urlFileHeader == "[InternetShortcut]" && urlFileValue is not null)
                 {
-                    var name = Path.GetFileNameWithoutExtension(file.Name);
-                    var url = result2.Split('=')[1];
-                    await Container.InsertNewBookmarkAtTop(new BookmarkModelUi() { Name = name, FolderId = Model.Id, Url = url });
+                    var filename = Path.GetFileNameWithoutExtension(file.Name);
+                    var url = urlFileValue.Split('=')[1];
+                    //TODO: this will reverse the order
+                    //TODO: highlight new folders in some manner, and allow a cancellation?
+                    await FolderContainer.InsertNewBookmarkAtTop(new BookmarkModelUi() { Name = filename, FolderId = FolderModel.Id, Url = url });
                 }
             }
         }
         catch (Exception)
         {
+            //TODO: present user with friendly error.
+            //case: invalid url file --> unknown file type
+            //case: application error --> ??
             throw;
         }
         isLoadingFiles = false;
-        await Container.SnapShotCallback.InvokeAsync();
+        await FolderContainer.SnapShotCallback.InvokeAsync();
     }
 
     private async Task Delete()
     {
-        await Container.DeleteFolder(Model.Id);
-    }
-
-    private void HandleEditFolderTitle()
-    {
-        Console.WriteLine("Edit Folder Title");
+        await FolderContainer.DeleteFolder(FolderModel.Id);
     }
 
     private void HandleDragStart(FolderModelUi selectedCollection)
     {
-        Container.FolderDragPayload = selectedCollection;
-        Container.FolderDragPayload.Hidden = true;
+        FolderContainer.FolderDragPayload = selectedCollection;
+        FolderContainer.FolderDragPayload.Hidden = true;
     }
 
     private void HandleOnDragEnter()
-    {
-
-    }
-
-    private void ShowDragBox()
     {
 
     }
@@ -108,20 +109,20 @@
     {
         Console.WriteLine("Firing Folder HandleDragOver");
 
-        if (Container.FolderDragPayload is null && Container.BookmarkDragPayload is null)
+        if (FolderContainer.FolderDragPayload is null && FolderContainer.BookmarkDragPayload is null)
         {
             showDragBox = true;
         }
         else
         {
-            if (Container.FolderDragPayload != null)
+            if (FolderContainer.FolderDragPayload != null)
             {
-                await Container.MoveFolderPosition(collection.Id, Container.FolderDragPayload);
+                await FolderContainer.MoveFolderPosition(collection.Id, FolderContainer.FolderDragPayload);
             }
 
-            if (Container.BookmarkDragPayload != null)
+            if (FolderContainer.BookmarkDragPayload != null)
             {
-                await Container.MoveBookmarkToFolder(collection);
+                await FolderContainer.MoveBookmarkToFolder(collection);
             }
         }
     }
@@ -132,24 +133,18 @@
 
         if (showDragBox) { showDragBox = false; }
 
-        if (Container.FolderDragPayload != null)
+        if (FolderContainer.FolderDragPayload != null)
         {
-            Container.FolderDragPayload.Hidden = false;
-            Container.FolderDragPayload = null;
-            await Container.SnapShotCallback.InvokeAsync();
+            FolderContainer.FolderDragPayload.Hidden = false;
+            FolderContainer.FolderDragPayload = null;
+            await FolderContainer.SnapShotCallback.InvokeAsync();
         }
 
-        if (Container.BookmarkDragPayload != null)
+        if (FolderContainer.BookmarkDragPayload != null)
         {
-            Container.BookmarkDragPayload.Hidden = false;
-            Container.BookmarkDragPayload = null;
-            await Container.SnapShotCallback.InvokeAsync();
+            FolderContainer.BookmarkDragPayload.Hidden = false;
+            FolderContainer.BookmarkDragPayload = null;
+            await FolderContainer.SnapShotCallback.InvokeAsync();
         }
-    }
-
-    [JSInvokable]
-    public static void UrlDrop(string url)
-    {
-        var result = url.Replace(System.Environment.NewLine, string.Empty);
     }
 }
