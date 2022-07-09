@@ -1,5 +1,5 @@
 ﻿<svg xmlns="http://www.w3.org/2000/svg"
-     class="pt-1 hover:bg-gray-400"
+     class="rounded hover:bg-gray-400"
      width="@Size"
      height="@Size"
      @onclick="HandleDelete"
@@ -10,7 +10,7 @@
 
 @code {
 
-    private const int _defaultSize = 16;
+    private const int _defaultSize = 18;
 
     [Parameter]
     public int Id { get; set; }
