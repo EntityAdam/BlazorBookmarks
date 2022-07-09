@@ -1,14 +1,18 @@
 ﻿@if (IsEditMode)
 {
-    <input @bind-value="NewFolderName" type="text" placeholder="@FolderName" />
-    <div class="flex">
-        <button @onclick="Save" class="px-2 py-2 border-2 rounded bg-blue-400 hover:bg-blue-500">Save</button>
-        <button @onclick="Cancel" class="px-2 py-2 border-2 rounded bg-gray-400 hover:bg-gray-500">X</button>
+    <div class="flex items-center space-x-2 px-2 py-1 bg-teal-600">
+        <input type="text"   class="form-control block text-sm font-normal bg-clip-padding border border-solid border-gray-300 transition ease-in-out m-0 rounded-lg" @bind-value="NewFolderName" placeholder="@FolderName" />
+        <input type="button" value="Save" @onclick="Save" class="form-control transition ease-in-out text-sm border-1 px-2 py-2 rounded bg-blue-600 hover:bg-blue-800" />
+        <input type="button" value="X"    @onclick="Cancel" class="form-control transition ease-in-out text-sm border-1 px-2 py-2 rounded bg-gray-400 hover:bg-gray-500" />
     </div>
+
 }
 else
 {
-    <h3 @onclick="HandleEditFolderTitle" class="border-b-2 text-xl" style="border-color: black;">@FolderName</h3>
+    <div class="flex items-center justify-between px-2 py-2 bg-teal-600">
+        <h3 @onclick="HandleEditFolderTitle" class="border-b-2 text-xl" style="border-color: black;">@FolderName</h3>
+        <DeleteIcon Id="@FolderId" Size="24" />
+    </div>
 }
 
 @code {

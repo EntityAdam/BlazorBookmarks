@@ -1,4 +1,4 @@
-﻿<div class="flex flex-col flex-grow mb-1 mx-2 w-64 resize-x overflow-auto" style="flex-basis: auto; background-color:#9ccc65;"
+﻿<div class="flex flex-col flex-grow mb-1 mx-2 w-64 resize-x overflow-auto bg-teal-300" style="flex-basis: auto;"
      draggable="true"
      dropzone="move"
      @ondragstart="((e) => HandleDragStart(Model))"
@@ -11,11 +11,8 @@
 
     <!--<div class="@IsVisibleCssClass" style="pointer-events:none;">-->
     <div class="@IsVisibleCssClass" style="position:relative">
-        <div class="flex justify-between px-3 pb-2 items-center" style="background-color:#6b9b37;">
-            <FolderTitle FolderId="@Model.Id" FolderName="@Model.Name" />
-            <DeleteIcon Id="@Model.Id" DeleteCallback="Delete" Size="24" />
-        </div>
-        <div class="@IsDragBoxShown" style="border:dotted; border-width:1; border-color:#7953d2; opacity:1;">
+        <FolderTitle FolderId="@Model.Id" FolderName="@Model.Name" />
+        <div class="@IsDragBoxShown bg-teal-600" style="border:dotted; border-width:1; opacity:1;">
             <p style="position:absolute; left:5px; top:45px;">Drop bookmarks here</p>
             <InputFile OnChange="OnInputFileChanged" multiple class="w-full" style="border:dotted; border-width:1; opacity:0;" />
         </div>

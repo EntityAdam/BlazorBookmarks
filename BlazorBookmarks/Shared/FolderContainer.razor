@@ -22,8 +22,8 @@ else
             @ondrop="((e) => HandleOnDrop(e))" 
             @ondragover:preventDefault 
             @onkeypress="((e) => HandleKeyPress(e))"
-            class="flex flex-wrap py-5 items-baseline" 
-            style="background-color:#4a148c;" tabindex="1">
+            class="flex flex-wrap py-5 items-baseline bg-blue-400" 
+            tabindex="1">
 
         @foreach (var folder in CurrentState.Folders)
         {

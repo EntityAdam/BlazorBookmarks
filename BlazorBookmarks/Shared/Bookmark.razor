@@ -24,7 +24,7 @@
     @ondrop:stopPropagation>
 
     <div @onclick="HandleOnClick" @onclick:preventDefault class="flex justify-between">
-        <p class="truncate text-md">(@Model.Clicks) @Model.Name</p>
+        <p class="truncate text-base"><span class="px-2 py-1 text-xs font-bold leading-none text-white transform bg-gray-600 rounded-full" style="line-height:1.6rem;">@Model.Clicks</span> @Model.Name</p>
         <div class="flex justify-end ml-3">
             <EditIcon BookmarkId="@Model.Id" />
             <NavigateIcon BookmarkId="@Model.Id" Url="@Model.Url" />
