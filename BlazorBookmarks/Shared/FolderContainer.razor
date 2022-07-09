@@ -17,15 +17,14 @@ else
 {
     <CascadingValue Value="@this">
         <AppBar />
-        <div 
-            @ondrop:preventDefault 
-            @ondrop="((e) => HandleOnDrop(e))" 
-            @ondragover:preventDefault 
-            @onkeypress="((e) => HandleKeyPress(e))"
-            class="flex flex-wrap py-5 items-baseline bg-blue-400" 
-            tabindex="1">
+        <div @ondrop:preventDefault
+         @ondrop="((e) => HandleOnDrop(e))"
+         @ondragover:preventDefault
+         @onkeypress="((e) => HandleKeyPress(e))"
+         class="flex flex-wrap py-5 items-baseline bg-blue-400"
+         tabindex="1">
 
-        @foreach (var folder in CurrentState.Folders)
+            @foreach (var folder in CurrentState.Folders)
         {
             if (isShowEmptyFolders || CurrentState.Bookmarks.Any(b => b.FolderId == folder.Id))
             {
@@ -223,4 +222,35 @@ else
         await SnapShotCallback.InvokeAsync();
     }
 
+    public async Task Import(Stream stream)
+    {
+        var (folders, bookmarks) = EdgeBookmarkParser.ReadFile(stream);
+        List<FolderModelUi> uiFolders = new();
+        List<BookmarkModelUi> uiBookmarks = new();
+        var folderIndex = CurrentState.Folders.Max(x => x.Id);
+        foreach (var folder in folders)
+        {
+            folderIndex++;
+            uiFolders.Add(new() { Id = folderIndex, Name = folder.Name, LastUpdated = folder.LastUpdated });
+
+        }
+        folderIndex++;
+        uiFolders.Add(new() { Id = folderIndex, Name = "IMPORTED", LastUpdated = DateTime.UtcNow });
+
+        var bookmarkIndex = CurrentState.Bookmarks.Max(x => x.Id);
+        foreach(var bookmark in bookmarks)
+        {
+            bookmarkIndex++;
+            uiBookmarks.Add(new() { Id = bookmarkIndex, Url = bookmark.Url, FolderId = folderIndex, Name = bookmark.Name });
+        }
+
+        //TODO: Present to user for action (cancel, save)
+
+        CurrentState.Folders.AddRange(uiFolders);
+        CurrentState.Bookmarks.AddRange(uiBookmarks);
+
+        await SnapShotCallback.InvokeAsync();
+        IsShowSettings = false;
+        await InvokeAsync(StateHasChanged);
+    }
 }

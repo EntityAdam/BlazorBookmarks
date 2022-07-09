@@ -14,8 +14,7 @@ namespace UnitTests
         public void Test()
         {
             string filename = @"C:\test\multifolder.html";
-            var reader = new EdgeBookmarkParser();
-            var x = reader.ReadFile(filename);
+            var x = EdgeBookmarkParser.ReadFile(filename);
         }
     }
 }

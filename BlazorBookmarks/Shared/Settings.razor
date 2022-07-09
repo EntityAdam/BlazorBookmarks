@@ -17,9 +17,21 @@
     </div>
     <form class="flex items-center space-x-6 bg-blue-400 justify-center py-5">
         <label for="files" class="bg-blue-200 rounded px-2 py-2 hover:bg-blue-400 transition ease-in-out hover:bg-blue-800">Import Bookmarks</label>
-        <InputFile id="files" class="hidden" />
+        <InputFile OnChange="@LoadFile" id="files" class="hidden" />
     </form>
 </div>
-@code {
 
+@code {
+    [CascadingParameter]
+    public FolderContainer Container { get; set; }
+
+    private async Task LoadFile(InputFileChangeEventArgs e)
+    {
+        if (e.FileCount > 0)
+        {
+            MemoryStream ms = new();
+            await e.File.OpenReadStream().CopyToAsync(ms);
+            await Container.Import(ms);
+        }
+    }
 }

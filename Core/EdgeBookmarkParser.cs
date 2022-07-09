@@ -4,15 +4,28 @@ using System.IO;
 
 namespace Core
 {
-    public class EdgeBookmarkParser
+    public static class EdgeBookmarkParser
     {
-        public (IEnumerable<FolderModel>, IEnumerable<BookmarkModel>) ReadFile(string filename)
+        public static (IEnumerable<FolderModel>, IEnumerable<BookmarkModel>) ReadFile(Stream stream)
+        {
+            stream.Seek(0, SeekOrigin.Begin);
+            var doc = new HtmlDocument();
+            doc.Load(stream);
+            return ReadDoc(doc);
+        }
+
+        public static (IEnumerable<FolderModel>, IEnumerable<BookmarkModel>) ReadFile(string filename)
         {
             if (!File.Exists(filename))
                 throw new FileNotFoundException();
             var doc = new HtmlDocument();
             doc.Load(filename);
-            var bookmarkExportFolderNodes = doc.DocumentNode.SelectNodes("//h3");
+            return ReadDoc(doc);
+        }
+
+        public static (IEnumerable<FolderModel>, IEnumerable<BookmarkModel>) ReadDoc(HtmlDocument htmlDocument)
+        {
+            var bookmarkExportFolderNodes = htmlDocument.DocumentNode.SelectNodes("//h3");
             var folderIndex = -1;
             List<FolderModel> folders = new();
             List<BookmarkModel> bookmarks = new();
@@ -26,7 +39,7 @@ namespace Core
                 var folder = new FolderModel() { Id = folderIndex, Name = folderName, LastUpdated = lastModifiedUtcDateTime };
                 folders.Add(folder);
             }
-            var bookmarkNodes = doc.DocumentNode.SelectNodes("//a");
+            var bookmarkNodes = htmlDocument.DocumentNode.SelectNodes("//a");
             foreach (var bookmarkNode in bookmarkNodes)
             {
                 var bookMarkurl = bookmarkNode.Attributes["HREF"].Value;
