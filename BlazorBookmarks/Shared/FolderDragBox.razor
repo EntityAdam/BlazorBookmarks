@@ -1,0 +1,55 @@
+﻿<div class="@IsDragBoxShown() bg-teal-600 border-1" style="border:dotted;">
+    <p style="position:absolute; left:5px; top:45px;">Drop bookmarks here</p>
+    @*//change opacity 0 to hidden?*@
+    <InputFile OnChange="OnInputFileChanged" multiple class="w-full" style="border:dotted; border-width:1; opacity:0;" />
+</div>
+
+@code {
+    [CascadingParameter] FolderContainer FolderContainer { get; set; }
+
+    [Parameter] public bool Visible { get; set; } = false;
+
+    [Parameter] public int FolderId { get; set; }
+
+    private bool isLoadingFiles { get; set; } = false;
+
+    private const int maximumFileCount = 400;
+
+    private string IsDragBoxShown() => Visible ? "block" : "hidden";
+
+    private async Task OnInputFileChanged(InputFileChangeEventArgs args)
+    {
+        //TODO: extract method
+        isLoadingFiles = true;
+        try
+        {
+            foreach (var file in args.GetMultipleFiles(maximumFileCount))
+            {
+                //TODO: Check for memory leak
+                using MemoryStream memoryStream = new();
+                await file.OpenReadStream().CopyToAsync(memoryStream);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                using StreamReader streamReader = new(memoryStream);
+                var urlFileHeader = await streamReader.ReadLineAsync();
+                var urlFileValue = await streamReader.ReadLineAsync();
+                if (urlFileHeader == "[InternetShortcut]" && urlFileValue is not null)
+                {
+                    var filename = Path.GetFileNameWithoutExtension(file.Name);
+                    var url = urlFileValue.Split('=')[1];
+                    //TODO: this will reverse the order
+                    //TODO: highlight new folders in some manner, and allow a cancellation?
+                    await FolderContainer.InsertNewBookmarkAtTop(new BookmarkModelUi() { Name = filename, FolderId = FolderId, Url = url });
+                }
+            }
+        }
+        catch (Exception)
+        {
+            //TODO: present user with friendly error.
+            //case: invalid url file --> unknown file type
+            //case: application error --> ??
+            throw;
+        }
+        isLoadingFiles = false;
+        await FolderContainer.SnapShotCallback.InvokeAsync();
+    }
+}
