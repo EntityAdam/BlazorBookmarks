@@ -10,7 +10,7 @@
      @ondrop:stopPropagation>
     <div class="@IsVisibleCssClass()" style="position:relative">
         <FolderTitle FolderId="@FolderModel.Id" FolderName="@FolderModel.Name" />
-        <FolderDragBox FolderId="@FolderModel.Id" Visible="@showDragBox" />
+        <FolderDragBox FolderId="@FolderModel.Id" Visible="@ShowFolderDragBox" />
         <ul class="px-3 py-5" style="pointer-events:auto">
             @foreach (var bookmark in FolderContainer.CurrentState.Bookmarks.Where(x => x.FolderId == FolderModel.Id))
             {
@@ -24,21 +24,11 @@
 
 @code {
 
-    [CascadingParameter]
-    public FolderContainer FolderContainer { get; set; }
+    [CascadingParameter] public FolderContainer FolderContainer { get; set; }
 
-    [Parameter]
-    public FolderModelUi FolderModel { get; set; }
+    [Parameter] public FolderModelUi FolderModel { get; set; }
 
-
-    private const int maximumFileCount = 400; //TODO: Test this to see if it's slow
-
-    //convert to nullable?
-    private int dragBoxTarget;
-
-    private bool showDragBox = false;
-
-    private bool isLoadingFiles = false; //TODO: use this to show a spinner?
+    [Parameter] public bool ShowFolderDragBox { get; set; } = false;
 
     private string IsVisibleCssClass() => FolderModel.Hidden ? "invisible" : "visible";
 
@@ -69,7 +59,7 @@
 
         if (FolderContainer.FolderDragPayload is null && FolderContainer.BookmarkDragPayload is null)
         {
-            showDragBox = true;
+            FolderContainer.SetFolderDragBoxTarget(FolderModel.Id);
         }
         else
         {
@@ -89,7 +79,10 @@
     {
         Console.WriteLine("Firing HandleDrop Folder");
 
-        if (showDragBox) { showDragBox = false; }
+        if (ShowFolderDragBox)
+        {
+            FolderContainer.ClearFolderDragBoxTarget();
+        }
 
         if (FolderContainer.FolderDragPayload != null)
         {

@@ -28,7 +28,7 @@ else
         {
             if (isShowEmptyFolders || CurrentState.Bookmarks.Any(b => b.FolderId == folder.Id))
             {
-                <Folder FolderModel="@folder" />
+                <Folder FolderModel="@folder" ShowFolderDragBox="@IsFolderDragBoxShown(@folder.Id)"/>
             }
         }
         <Addfolder />
@@ -65,6 +65,29 @@ else
 
     //TODO: Make nullable
     public BookmarkModelUi BookmarkDragPayload { get; set; }
+
+
+    private int? _folderDragBoxTarget { get; set; }
+
+    public void SetFolderDragBoxTarget(int folderId)
+    {
+        _folderDragBoxTarget = folderId;    
+    }
+
+    public int? GetFolderDragBoxTarget()
+    {
+        return _folderDragBoxTarget;    
+    }
+
+    public bool IsFolderDragBoxShown(int folderId)
+    {
+        return folderId == _folderDragBoxTarget;
+    }
+
+    public void ClearFolderDragBoxTarget()
+    {
+        _folderDragBoxTarget = null;
+    }
 
     public async Task ShowSettings()
     {

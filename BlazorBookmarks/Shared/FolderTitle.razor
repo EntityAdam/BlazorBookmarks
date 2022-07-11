@@ -3,19 +3,19 @@
 
 @if (IsEditMode)
 {
-    <div class="flex flex-col flex-grow mb-1 mx-2 w-64 resize-x overflow-auto bg-teal-300" style="flex-basis: auto;">
-        <div class="flex items-center space-x-2 px-2 py-1 bg-teal-600">
+    <div class="flex flex-col bg-teal-300" style="flex-basis: auto;">
+        <div class="flex items-center space-x-2 px-1 py-1 bg-teal-600">
             <input type="text" class="form-control block text-sm font-normal bg-clip-padding border border-solid border-gray-300 transition ease-in-out m-0 rounded-lg" @bind-value="NewFolderName" placeholder="@FolderName" />
             <input type="button" value="Save" @onclick="Save" class="form-control transition ease-in-out text-sm border-1 px-2 py-2 rounded bg-blue-600 hover:bg-blue-800" />
-            <input type="button" value="X" @onclick="Cancel" class="form-control transition ease-in-out text-sm border-1 px-2 py-2 rounded bg-gray-400 hover:bg-gray-500" />
+            <input type="button" value="X" @onclick="Cancel" class="form-control transition ease-in-out text-sm border-1 px-3 py-2 rounded bg-gray-400 hover:bg-gray-500" />
         </div>
     </div>
 }
 else
 {
     <div class="flex items-center justify-between px-2 py-2 bg-teal-600">
-        <h3 @onclick="HandleEditFolderTitle" class="border-b-2 text-xl" style="border-color: black;">@FolderName</h3>
-        <DeleteIcon Id="@FolderId" IconSize="24" />
+        <h3 @onclick="HandleEditFolderTitle" class="border-b-2 text-xl cursor-pointer" style="border-color: black;">@FolderName</h3>
+        <DeleteIcon Id="@FolderId" IconSize="24" DeleteCallback="HandleOnClick" />
     </div>
 }
 
@@ -37,6 +37,11 @@ else
     {
         NewFolderName = FolderName;
         return Task.CompletedTask;
+    }
+
+    private async Task HandleOnClick()
+    {
+        await Container.DeleteFolder(FolderId);
     }
 
     private void HandleEditFolderTitle()
