@@ -12,6 +12,7 @@
         <FolderTitle FolderId="@FolderModel.Id" FolderName="@FolderModel.Name" />
         <FolderDragBox FolderId="@FolderModel.Id" Visible="@ShowFolderDragBox" />
         <ul class="px-3 py-5" style="pointer-events:auto">
+            @**TODO: This is extremely slow at more than 400 bookmarks*@
             @foreach (var bookmark in FolderContainer.CurrentState.Bookmarks.Where(x => x.FolderId == FolderModel.Id))
             {
                 <Bookmark Model="@bookmark" />
@@ -53,7 +54,7 @@
         Console.WriteLine("Firing Folder HandleOnDragLeave");
     }
 
-    private async Task HandleDragOver(FolderModelUi collection)
+    private async Task HandleDragOver(FolderModelUi folderModelUi)
     {
         Console.WriteLine("Firing Folder HandleDragOver");
 
@@ -65,12 +66,19 @@
         {
             if (FolderContainer.FolderDragPayload != null)
             {
-                await FolderContainer.MoveFolderPosition(collection.Id, FolderContainer.FolderDragPayload);
+                if (FolderContainer.FolderDragPayload == folderModelUi)
+                {
+                    return;
+                }
+                else
+                {
+                    await FolderContainer.MoveFolderPosition(folderModelUi.Id, FolderContainer.FolderDragPayload);
+                }
             }
 
             if (FolderContainer.BookmarkDragPayload != null)
             {
-                await FolderContainer.MoveBookmarkToFolder(collection);
+                await FolderContainer.MoveBookmarkToFolder(folderModelUi);
             }
         }
     }
