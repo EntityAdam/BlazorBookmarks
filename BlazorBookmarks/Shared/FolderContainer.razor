@@ -28,7 +28,7 @@ else
         {
             if (isShowEmptyFolders || CurrentState.Bookmarks.Any(b => b.FolderId == folder.Id))
             {
-                <Folder FolderModel="@folder" ShowFolderDragBox="@IsFolderDragBoxShown(@folder.Id)"/>
+                <Folder FolderModel="@folder" ShowFolderDragBox="@IsFolderDragBoxShown(@folder.Id)" />
             }
         }
         <Addfolder />
@@ -71,12 +71,12 @@ else
 
     public void SetFolderDragBoxTarget(int folderId)
     {
-        _folderDragBoxTarget = folderId;    
+        _folderDragBoxTarget = folderId;
     }
 
     public int? GetFolderDragBoxTarget()
     {
-        return _folderDragBoxTarget;    
+        return _folderDragBoxTarget;
     }
 
     public bool IsFolderDragBoxShown(int folderId)
@@ -120,11 +120,8 @@ else
     public async Task MoveFolderPosition(int dragTargetFolderId, FolderModelUi folderDragPayload)
     {
         var dragTargetIndex = CurrentState.Folders.FindIndex(x => x.Id == dragTargetFolderId);
-        if (dragTargetIndex >= 0)
-        {
-            CurrentState.Folders.RemoveAll(x => x.Id == FolderDragPayload.Id);
-            CurrentState.Folders.Insert(dragTargetIndex, folderDragPayload);
-        }
+        CurrentState.Folders.Remove(folderDragPayload);
+        CurrentState.Folders.Insert(dragTargetIndex, folderDragPayload);
         await InvokeAsync(StateHasChanged);
     }
 
