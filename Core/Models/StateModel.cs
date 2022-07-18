@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
-
-namespace Core.Models
+﻿namespace Core.Models
 {
     public class StateModel : IDeepCloneable<StateModel>
     {
@@ -24,8 +19,8 @@ namespace Core.Models
 
         public StateModel DeepCopy()
         {
-            var copyFolders = Folders.Select(x => x.ShallowCopy()).ToList();
-            var copyBookmarks = Bookmarks.Select(x => x.ShallowCopy()).ToList();
+            var copyFolders = Folders.ToList();
+            var copyBookmarks = Bookmarks.ToList();
             return new StateModel(copyFolders, copyBookmarks);
         }
     }

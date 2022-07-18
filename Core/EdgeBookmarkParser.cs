@@ -36,7 +36,7 @@ namespace Core
                 var addDate = folderNode.Attributes["ADD_DATE"].Value;
                 var lastModifiedInEpoch = folderNode.Attributes["LAST_MODIFIED"].Value;
                 var lastModifiedUtcDateTime = DateTimeOffset.FromUnixTimeSeconds(long.Parse(lastModifiedInEpoch)).UtcDateTime;
-                var folder = new FolderModel() { Id = folderIndex, Name = folderName, LastUpdated = lastModifiedUtcDateTime };
+                var folder = new FolderModel(folderIndex, folderName, lastModifiedUtcDateTime);
                 folders.Add(folder);
             }
             var bookmarkNodes = htmlDocument.DocumentNode.SelectNodes("//a");
@@ -45,7 +45,8 @@ namespace Core
                 var bookMarkurl = bookmarkNode.Attributes["HREF"].Value;
                 var bookMarkaddDate = bookmarkNode.Attributes["ADD_DATE"].Value;
                 var bookMarkName = bookmarkNode.InnerText;
-                var bookmark = new BookmarkModel() { Name = bookMarkName, Url = bookMarkurl };
+                /* TODO: Fix Id 0, FolderId 0*/
+                var bookmark = new BookmarkModel(Id: 0, FolderId: 0, bookMarkurl, bookMarkName, Clicks: 0);
                 bookmarks.Add(bookmark);
             }
             return (folders, bookmarks);
