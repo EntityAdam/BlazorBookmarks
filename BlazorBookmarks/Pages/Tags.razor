@@ -1,0 +1,57 @@
+﻿@using System.Collections.Generic
+@inject IFacade facade
+@page "/tags"
+
+@if (State == null)
+{
+    <h1>Loading...</h1>
+}
+else
+{
+    foreach (var kvp in TagCloud())
+    {
+        <p>@($"Word: {kvp.Item1} Count: {kvp.Item2}")</p>
+    }
+
+    <ul>
+        <li>[X] Basic Word Count</li>
+        <li>[ ] Make the tags into buttons, click them to add to "my tags"</li>
+        <li>[ ] Create excluded word list</li>
+        <li>[ ] Show bookmarks from viewing a tag</li>
+        <li>[ ] Factor in click count somehow? (eg, popular tags)</li>
+        <li>[ ] Allow create custom tags</li>
+    </ul>
+}
+
+@code {
+    private StateModelUi State { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var state = await facade.GetStateFromStore();
+        State = MapToStateUi(state);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private static StateModelUi MapToStateUi(StateModel stateModel)
+    {
+        var folders = stateModel.Folders.Select(x => new FolderModelUi() { Id = x.Id, Name = x.Name, LastUpdated = x.LastUpdated }).ToList();
+        var bookmarks = stateModel.Bookmarks.Select(x => new BookmarkModelUi() { Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url, Clicks = x.Clicks }).ToList();
+        return new StateModelUi(folders, bookmarks);
+    }
+
+    private IEnumerable<(string, int)> TagCloud()
+    {
+        List<string> keyWords = new();
+        foreach (var b in State.Bookmarks)
+        {
+            var words = b.Name.Split(" ", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            var keys = words.Where(x => x.Length > 2).Distinct(StringComparer.CurrentCultureIgnoreCase);
+            keyWords.AddRange(keys);
+        }
+
+        var result = keyWords.GroupBy(x => x).Select(group => (group.Key, group.Count())).Where(x => x.Item2 > 1).OrderByDescending(x => x.Item2);
+
+        return result;
+    }
+}
