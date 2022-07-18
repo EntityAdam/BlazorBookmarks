@@ -10,15 +10,9 @@ namespace UnitTests
 {
     public class StateTests
     {
-        private Facade StateModel { get; set; }
+        private Facade Facade { get; set; }
 
         public StateTests()
-        {
-            StateModel = new Facade(new StateManager<StateModel>(), new BookmarkMemoryStore());
-            InitializeState();
-        }
-
-        private void InitializeState()
         {
             var folders = new List<FolderModel>() {
                 new FolderModel(1, "Folder1", DateTime.UtcNow)
@@ -27,26 +21,32 @@ namespace UnitTests
                 new BookmarkModel(1, 1, "https://null.com", "Bookmark1", 0)
             };
 
-            var state = new StateModel(folders, bookmarks);
-
-            Task.Run(() => StateModel.Snapshot(state));
+            var testScenarioState = new StateModel(folders, bookmarks);
+            Facade = new Facade(new StateManager<StateModel>(), new BookmarkMemoryStore(testScenarioState));
         }
 
         private async Task AddNewState()
         {
+            _ = await Facade.GetStateFromStore();
+
             var newState = new StateModel()
             {
                 Folders = new List<FolderModel> { new(2, "Folder2", DateTime.UtcNow) },
                 Bookmarks = new List<BookmarkModel> { new(2, 2, "https://null.com", "Bookmark2", 0) }
             };
-
-            await StateModel.Snapshot(newState);
+            await Facade.Snapshot(newState);
         }
 
         [Fact]
         public async Task InitialState_Should_BeValid()
         {
-            var state = await StateModel.GetState();
+            //Arrange
+            _ = await Facade.GetStateFromStore();
+
+            //Act
+
+            //Assert
+            var state = await Facade.GetState();
             state.Folders[0].Name.Should().Be("Folder1");
             state.Bookmarks[0].Name.Should().Be("Bookmark1");
             state.Bookmarks[0].FolderId.Should().Be(1);
@@ -55,10 +55,13 @@ namespace UnitTests
         [Fact]
         public async Task InitialState_Should_NotUndo()
         {
-            var state = await StateModel.GetState();
+            //Arrange
+            var state = await Facade.GetStateFromStore();
 
-            await StateModel.Undo();
+            //Act
+            await Facade.Undo();
 
+            //Assert
             state.Folders[0].Name.Should().Be("Folder1");
             state.Bookmarks[0].Name.Should().Be("Bookmark1");
             state.Bookmarks[0].FolderId.Should().Be(1);
@@ -67,9 +70,14 @@ namespace UnitTests
         [Fact]
         public async Task State_Should_SnapShot()
         {
+            //Arrange
+            _ = await Facade.GetStateFromStore();
+
+            //Act
             await AddNewState();
 
-            var currentState = await StateModel.GetState();
+            //Assert
+            var currentState = await Facade.GetState();
             currentState.Folders[0].Name.Should().Be("Folder2");
             currentState.Bookmarks[0].Name.Should().Be("Bookmark2");
             currentState.Bookmarks[0].FolderId.Should().Be(2);
@@ -78,26 +86,33 @@ namespace UnitTests
         [Fact]
         public async Task State_Should_Undo()
         {
+            //Arrange
+            _ = await Facade.GetStateFromStore();
+
+            //Act
             await AddNewState();
+            await Facade.Undo();
 
-            await StateModel.Undo();
-
-            var currentState = await StateModel.GetState();
+            //Assert
+            var currentState = await Facade.GetState();
             currentState.Folders[0].Name.Should().Be("Folder1");
             currentState.Bookmarks[0].Name.Should().Be("Bookmark1");
             currentState.Bookmarks[0].FolderId.Should().Be(1);
-
         }
 
         [Fact]
         public async Task State_Should_Redo()
         {
+            //Arrange
+            _ = await Facade.GetStateFromStore();
+
+            //Act
             await AddNewState();
+            await Facade.Undo();
+            await Facade.Redo();
 
-            await StateModel.Undo();
-            await StateModel.Redo();
-
-            var currentState = await StateModel.GetState();
+            //Assert
+            var currentState = await Facade.GetState();
             currentState.Folders[0].Name.Should().Be("Folder2");
             currentState.Bookmarks[0].Name.Should().Be("Bookmark2");
             currentState.Bookmarks[0].FolderId.Should().Be(2);
@@ -106,13 +121,17 @@ namespace UnitTests
         [Fact]
         public async Task OriginatorUndo_ShouldReturnToOriginalStateAndNotFail()
         {
+            //Arrange
+            _ = await Facade.GetStateFromStore();
+
+            //Act
             await AddNewState();
+            await Facade.Undo();
+            await Facade.Undo();
+            await Facade.Undo();
 
-            await StateModel.Undo();
-            await StateModel.Undo();
-            await StateModel.Undo();
-
-            var currentState = await StateModel.GetState();
+            //Assert
+            var currentState = await Facade.GetState();
             currentState.Folders[0].Name.Should().Be("Folder1");
             currentState.Bookmarks[0].Name.Should().Be("Bookmark1");
             currentState.Bookmarks[0].FolderId.Should().Be(1);
@@ -181,7 +200,6 @@ namespace UnitTests
             {
                 newOrder.Add(folders[i] with { Id = i });
             }
-
         }
     }
 }
