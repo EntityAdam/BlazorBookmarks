@@ -109,8 +109,8 @@ else
 
     private static StateModel MapToState(StateModelUi stateModelUi)
     {
-        var folders = stateModelUi.Folders.Select(x => new FolderModel() {Id = x.Id, Name = x.Name, LastUpdated = x.LastUpdated}).ToList();
-        var bookmarks = stateModelUi.Bookmarks.Select(x => new BookmarkModel() {Id = x.Id, FolderId = x.FolderId, Name = x.Name, Url = x.Url, Clicks = x.Clicks}).ToList();
+        var folders = stateModelUi.Folders.Select(x => new FolderModel(x.Id, x.Name, x.LastUpdated)).ToList();
+        var bookmarks = stateModelUi.Bookmarks.Select(x => new BookmarkModel(x.Id, x.FolderId, x.Url, x.Name, x.Clicks)).ToList();
         return new StateModel(folders, bookmarks);
     }
 
