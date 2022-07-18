@@ -7,6 +7,7 @@
         public string Url { get; set; }
         public string Name { get; set; }
         public bool Hidden { get; set; }
+        public bool Visible { get; set; } = true;
         public int Clicks { get; set; }
 
         public BookmarkModelUi ShallowCopy() => (BookmarkModelUi)MemberwiseClone();

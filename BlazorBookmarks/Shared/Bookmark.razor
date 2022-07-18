@@ -11,7 +11,7 @@
     }
 </style>
 
-<li class="bg-white text-sm mb-2 shadow-md rounded px-1 hover:bg-gray-200 transition ease-in-out edit-svg cursor-pointer @IsVisibleCssClass"
+<li class="bg-white text-sm mb-2 shadow-md rounded px-1 hover:bg-gray-200 transition ease-in-out edit-svg cursor-pointer @IsHiddenCssClass @IsVisibleCssClass"
     draggable="true"
     dropzone="move"
     @ondragstart:stopPropagation
@@ -35,7 +35,9 @@
 
 @code {
 
-    private string IsVisibleCssClass => Model.Hidden ? "invisible" : "visible";
+    private string IsHiddenCssClass => Model.Hidden ? "invisible" : "visible";
+
+    private string IsVisibleCssClass => Model.Visible ? "" : "hidden";
 
     [CascadingParameter]
     public FolderContainer Container { get; set; }

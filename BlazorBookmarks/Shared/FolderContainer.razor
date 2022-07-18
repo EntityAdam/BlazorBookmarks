@@ -253,6 +253,28 @@ else
         await InvokeAsync(StateHasChanged);
     }
 
+    public async Task FilterBookmarks(string searchString)
+    {
+        var unmatched = CurrentState.Bookmarks.Where(x => !x.Name.Contains(searchString, StringComparison.CurrentCultureIgnoreCase));
+        foreach (var b in unmatched)
+        {
+            b.Visible = false;
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public async Task ClearFilter()
+    {
+        if (CurrentState.Bookmarks.Any(x => !x.Visible))
+        {
+            foreach (var b in CurrentState.Bookmarks)
+            {
+                b.Visible = true;
+            }
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
     private void HandleOnDrop(DragEventArgs e)
     {
         Console.WriteLine("FolderContainer Firing HandleOnDrop");
