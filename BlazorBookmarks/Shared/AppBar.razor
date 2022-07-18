@@ -10,9 +10,9 @@
     [CascadingParameter]
     public FolderContainer Container { get; set; }
 
-    private void HandleOnClick()
+    private async Task HandleOnClick()
     {
-        Container.ShowSettings();
+        await Container.ShowSettings();
     }
 
     private void HandleOnDrop(DragEventArgs e)
