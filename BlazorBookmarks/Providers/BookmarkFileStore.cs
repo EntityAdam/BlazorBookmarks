@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BlazorBookmarks.Providers
 {
-    public class BookmarkFileStore : IBookmarkStore
+    public class BookmarkFileStore : IPersistantStore
     {
         private readonly IHostEnvironment environment;
 

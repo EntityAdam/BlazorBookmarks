@@ -22,7 +22,7 @@ namespace UnitTests
             };
 
             var testScenarioState = new StateModel(folders, bookmarks);
-            Facade = new Facade(new StateManager<StateModel>(), new BookmarkMemoryStore(testScenarioState));
+            Facade = new Facade(new StateManager<StateModel>(), new PersistantStoreMemory(testScenarioState));
         }
 
         private async Task AddNewState()
@@ -140,7 +140,7 @@ namespace UnitTests
         [Fact]
         public async Task OriginatorRedo_ShouldReturnToLatestStateAndNotFail()
         {
-            var orig = new Facade(new StateManager<StateModel>(), new BookmarkMemoryStore());
+            var orig = new Facade(new StateManager<StateModel>(), new PersistantStoreMemory());
 
             var state1 = new StateModel()
             {
@@ -169,7 +169,7 @@ namespace UnitTests
         [Fact]
         public async Task Order_ShouldBePreserved_WhenOnlyIndexIsChanged()
         {
-            var orig = new Facade(new StateManager<StateModel>(), new BookmarkMemoryStore());
+            var orig = new Facade(new StateManager<StateModel>(), new PersistantStoreMemory());
             FolderModel folder1 = new(1, "Folder1", DateTime.UtcNow);
             FolderModel folder2 = new(2, "Folder2", DateTime.UtcNow);
             FolderModel folder3 = new(3, "Folder3", DateTime.UtcNow);

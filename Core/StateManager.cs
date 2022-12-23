@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Core
 {
-    public sealed class StateManager<T> : IStateManager<T> where T : IDeepCloneable<T>
+    public sealed class StateManager<T> : IStateManager<T> where T : IState<T>
     {
         private readonly ConcurrentStack<T> UndoStack = new();
         private readonly ConcurrentStack<T> RedoStack = new();
@@ -15,14 +15,14 @@ namespace Core
 
         public Task LoadState(T state)
         {
-            CurrentState = state.DeepCopy();
+            CurrentState = state.Snapshot();
             return Task.CompletedTask;
         }
 
         public Task Snapshot(T state)
         {
             if (CurrentState != null) UndoStack.Push(CurrentState);
-            CurrentState = state.DeepCopy();
+            CurrentState = state.Snapshot();
             return Task.CompletedTask;
         }
 

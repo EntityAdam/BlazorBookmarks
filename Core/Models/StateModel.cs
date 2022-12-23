@@ -1,6 +1,6 @@
 ﻿namespace Core.Models
 {
-    public class StateModel : IDeepCloneable<StateModel>
+    public class StateModel : IState<StateModel>
     {
         public List<FolderModel> Folders { get; set; }
         public List<BookmarkModel> Bookmarks { get; set; }
@@ -17,11 +17,9 @@
             Bookmarks = bookmarks;
         }
 
-        public StateModel DeepCopy()
+        public StateModel Snapshot()
         {
-            var copyFolders = Folders.ToList();
-            var copyBookmarks = Bookmarks.ToList();
-            return new StateModel(copyFolders, copyBookmarks);
+            return new StateModel(Folders, Bookmarks);
         }
     }
 }

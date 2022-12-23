@@ -2,7 +2,7 @@
 
 namespace Core
 {
-    public interface ISnapshottable<T> where T : IDeepCloneable<T>
+    public interface ISnapshottable<T> where T : IState<T>
     {
         Task<T> Redo();
         Task Snapshot(T state);

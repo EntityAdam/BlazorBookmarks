@@ -23,7 +23,7 @@ namespace BlazorBookmarks
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddTransient<IFacade, Facade>();
-            services.AddTransient<IBookmarkStore, BookmarkFileStore>();
+            services.AddTransient<IPersistantStore, BookmarkFileStore>();
             services.AddSingleton<IStateManager<StateModel>, StateManager<StateModel>>();
         }
 

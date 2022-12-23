@@ -41,7 +41,7 @@ namespace UnitTests
                 new(1, 3, "https://entityadam.com", "Folder3_Bookmark5", 0),
             };
             var state = new StateModel() { Folders = folders, Bookmarks = bookmarks };
-            var store = new LocalBookmarkFileStore();
+            var store = new PersistantStoreFile();
 
             await store.Save(state);
         }
@@ -49,7 +49,7 @@ namespace UnitTests
         [Fact]
         public async Task CanReadFromFile()
         {
-            var store = new LocalBookmarkFileStore();
+            var store = new PersistantStoreFile();
             var state = await store.Get();
 
             state.Folders.Count.Should().Be(5);

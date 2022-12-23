@@ -9,9 +9,9 @@ namespace Core
     {
         private readonly IStateManager<StateModel> stateManager;
 
-        private readonly IBookmarkStore bookmarkStore;
+        private readonly IPersistantStore bookmarkStore;
 
-        public Facade(IStateManager<StateModel> stateManager, IBookmarkStore bookmarkStore)
+        public Facade(IStateManager<StateModel> stateManager, IPersistantStore bookmarkStore)
         {
             this.stateManager = stateManager;
             this.bookmarkStore = bookmarkStore;

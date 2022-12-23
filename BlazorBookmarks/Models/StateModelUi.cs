@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace BlazorBookmarks.Models
 {
-    public class StateModelUi : IDeepCloneable<StateModelUi>
+    public class StateModelUi : IState<StateModelUi>
     {
         public List<FolderModelUi> Folders { get; set; }
         public List<BookmarkModelUi> Bookmarks { get; set; }
@@ -24,7 +24,7 @@ namespace BlazorBookmarks.Models
             Bookmarks = bookmarks;
         }
 
-        public StateModelUi DeepCopy()
+        public StateModelUi Snapshot()
         {
             var copyFolders = Folders.Select(x => x.ShallowCopy()).ToList();
             var copyBookmarks = Bookmarks.Select(x => x.ShallowCopy()).ToList();

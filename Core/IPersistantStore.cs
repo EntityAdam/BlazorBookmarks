@@ -3,7 +3,7 @@ using Core.Models;
 
 namespace Core
 {
-    public interface IBookmarkStore
+    public interface IPersistantStore
     {
         public Task Save(StateModel state);
         public Task<StateModel> Get();
